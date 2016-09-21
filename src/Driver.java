@@ -62,11 +62,9 @@ public class Driver {
 		
 		if(inFile!=null){
 			traverse(inFile, deepness, godzilla, outFile);
-		}
-		
+		}		
 	}
-	
-	
+
 	public static void traverse(File originalFile, int depth, 
 			 TreeMap<String, TreeMap<String, TreeSet<Integer>>> godzilla, File outFile){
 		
@@ -75,27 +73,21 @@ public class Driver {
 		 	 
 		boolean b = theFiles instanceof File[];
 		if(b){
-		
-		for (int i = 0; i < theFiles.length; i++) {
-		       String thisFile = theFiles[i].getName();
-		       if (theFiles[i].isFile()) {
-		           if (thisFile.endsWith(".txt")||thisFile.endsWith(".TXT")) {
-		               ArrayList<String> list = textToList(theFiles[i]);
-		               String[] finishedFileText = list.toArray(new String[0]);
-		               for(String n: finishedFileText){		     				
-		        			positions = getPositions(finishedFileText, n);	
-		        			godzilla = fullStructure(n, theFiles[i].toString(), positions, godzilla);		
-		               }   		
-		           }
-		       }
-		       else if (theFiles[i].isDirectory()) {
-		           traverse(theFiles[i], depth+1, godzilla, outFile);
-		        }
-		    }
-		 if(depth == 0){
-			 printDataStructureBuffered(godzilla, outFile);
-		 	}
-		 }	 
+			for (int i = 0; i < theFiles.length; i++) {
+				String thisFile = theFiles[i].getName();
+				if (theFiles[i].isFile()) {
+					if (thisFile.endsWith(".txt")||thisFile.endsWith(".TXT")) {
+						ArrayList<String> list = textToList(theFiles[i], godzilla);		
+			        }
+			    }
+			    else if (theFiles[i].isDirectory()) {
+			    	traverse(theFiles[i], depth+1, godzilla, outFile);
+			    }
+			}
+			if(depth == 0){
+				printDataStructureBuffered(godzilla, outFile);
+			}
+		}	 
 	}
 	
 	public static void printDataStructureBuffered(TreeMap<String, TreeMap<String, TreeSet<Integer>>> godzilla, File outFile){	
@@ -169,27 +161,31 @@ public class Driver {
 
 	//Takes in word, file, and positions to return FULL STRUCTURE
 	public static TreeMap<String, TreeMap<String, TreeSet<Integer>>> fullStructure(String wordUpper, String file, 
-				  	TreeSet<Integer> inPosition, TreeMap<String, TreeMap<String, TreeSet<Integer>>> godzilla)
+				  	int position, TreeMap<String, TreeMap<String, TreeSet<Integer>>> godzilla)
 	{	
+		
+		//TreeSet<Integer> inPosition
 		String word = wordUpper.toLowerCase();
 		
 		if(godzilla.get(word) == null){
 			godzilla.put(word, new TreeMap<String, TreeSet<Integer>>());
 		    godzilla.get(word).put(file, new TreeSet<Integer>());
-		    for(int n: inPosition){
-		    	godzilla.get(word).get(file).add(n);
-		    } 			
+		    	godzilla.get(word).get(file).add(position);
 		}else{
-			godzilla.get(word).put(file, new TreeSet<Integer>());
-			for(int n: inPosition){
-		    	godzilla.get(word).get(file).add(n);
-		    } 	
+			if(godzilla.get(word).get(file)==null){
+				godzilla.get(word).put(file, new TreeSet<Integer>());
+				godzilla.get(word).get(file).add(position);
+			}else {
+				godzilla.get(word).get(file).add(position);
+			}
 		}
 		return godzilla;
 	}
 	
 	//Takes in text in file to return a list of words
-	public static ArrayList<String> textToList(File file){
+	public static ArrayList<String> textToList(File file, TreeMap<String, TreeMap<String, TreeSet<Integer>>> godzilla){
+		
+		int positionHolder = 0;
 		
 		Charset charset = java.nio.charset.StandardCharsets.UTF_8;
 		ArrayList<String> fullList = new ArrayList<>();
@@ -202,16 +198,14 @@ public class Driver {
 		    	String x = null;
 		    	for(int i = 0; i < words.length; i++){
 		    		String holder = words[i];
-		    		if(!isAlphaNumeric(holder)){
-		    			x = holder.replaceAll("\\p{Punct}+", "");
-		    			words[i] = x.trim();
-		    		}
-		    	} 
-                for(int xx = 0; xx < words.length; xx++){
-                	if(words[xx].compareTo("") != 0){
-                		fullList.add(words[xx]);           	
-                	}
-                }
+		    		x = holder.replaceAll("\\p{Punct}+", "");
+	    			String m = x.trim();
+	    			if(m.compareTo("") != 0){
+	    				fullList.add(m);
+	    				positionHolder++;
+	    				godzilla = fullStructure(m, file.toString(), positionHolder, godzilla);	    				
+	                }	
+		    	}   		            
 		    	line = br.readLine();
 		    }
 		br.close();
@@ -221,26 +215,4 @@ public class Driver {
 		}
 		return fullList;
 	}	
-	
-	//returns true if the string only contains letters and digits
-	public static boolean isAlphaNumeric(String s){
-		String pattern= "^[a-zA-Z0-9]*$";
-        	if(s.matches(pattern)){
-        		return true;
-        	}
-        	return false;  
-	}
-	
-	//takes in text array and word to return positions of word in the text
-	public static TreeSet<Integer> getPositions(String[] text, String word){
-		int position;
-		TreeSet<Integer> n = new TreeSet<>();
-		for(int i = 0; i < text.length; i++){
-			position = i + 1;
-			if(word.compareToIgnoreCase(text[i]) == 0){
-				n.add(position);
-			}
-		}
-		return n;			
-	}
 }
