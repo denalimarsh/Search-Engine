@@ -77,7 +77,7 @@ public class Driver {
 				String thisFile = theFiles[i].getName();
 				if (theFiles[i].isFile()) {
 					if (thisFile.endsWith(".txt")||thisFile.endsWith(".TXT")) {
-						ArrayList<String> list = textToList(theFiles[i], godzilla);		
+						textToList(theFiles[i], godzilla);		
 			        }
 			    }
 			    else if (theFiles[i].isDirectory()) {
@@ -183,14 +183,12 @@ public class Driver {
 	}
 	
 	//Takes in text in file to return a list of words
-	public static ArrayList<String> textToList(File file, TreeMap<String, TreeMap<String, TreeSet<Integer>>> godzilla){
+	public static void textToList(File file, TreeMap<String, TreeMap<String, TreeSet<Integer>>> godzilla){
 		
 		int positionHolder = 0;
 		
 		Charset charset = java.nio.charset.StandardCharsets.UTF_8;
-		ArrayList<String> fullList = new ArrayList<>();
-		Path path1 = file.toPath();
-		
+		Path path1 = file.toPath();	
 		try (BufferedReader br = Files.newBufferedReader(path1, charset)) {
 		    String line = br.readLine();
 		    while ((line) != null) {
@@ -201,7 +199,6 @@ public class Driver {
 		    		x = holder.replaceAll("\\p{Punct}+", "");
 	    			String m = x.trim();
 	    			if(m.compareTo("") != 0){
-	    				fullList.add(m);
 	    				positionHolder++;
 	    				godzilla = fullStructure(m, file.toString(), positionHolder, godzilla);	    				
 	                }	
@@ -213,6 +210,5 @@ public class Driver {
 			System.out.println(ex.toString());
 			System.out.println("Could not find file " + file.toString());
 		}
-		return fullList;
 	}	
 }
