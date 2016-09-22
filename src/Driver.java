@@ -10,8 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.regex.Matcher;
-
 
 public class Driver {
 
@@ -20,12 +18,7 @@ public class Driver {
     }
 	
 	public static void main (String[] args){
-		
-//		for(int i = 0; i < args.length; i++){
-//			args[i] = args[i].replaceAll("\\", Matcher.quoteReplacement("/"));
-//			System.out.println(args[i]);
-//		}
-		
+			
 		int deepness = 0;
 		
 		//Reads -dir and -index arguments and responds appropriately
@@ -60,13 +53,27 @@ public class Driver {
 			indexFlag = false;
 		}
 		
-		//construct the main data structure
+		//instantiate the main data structure
 		TreeMap<String, TreeMap<String, TreeSet<Integer>>> godzilla = new TreeMap<>();
+		
 		
 		if(inFile!=null){
 			traverse(inFile, deepness, godzilla, outFile);
 		}		
 	}
+	
+	//Traverse: 
+	//iterates recursively through input directory
+	//if it finds a file, call textToList() on the file
+	//when depth is 0 (We have reached the root), call printDataStructureBuffered()
+	
+	//in:
+	//(File) input file from command line
+	//(Integer) depth declared in main (for printing)
+	//(TreeMap<....>) complete data structure
+	//(File) out file from command line
+	
+	//out: none
 
 	public static void traverse(File originalFile, int depth, 
 			 TreeMap<String, TreeMap<String, TreeSet<Integer>>> godzilla, File outFile){
@@ -94,14 +101,21 @@ public class Driver {
 	}
 	
 	
+	//PrintDataStructureBuffered: 
+	//prints out the complete data structure to 
+	//the outputfile in a pretty JSON format
+	
+	//in:
+	//TreeMap<...> complete data structure
+	//the out file from the command line
+	
+	//out: none
+	
 	public static void printDataStructureBuffered(TreeMap<String, TreeMap<String, TreeSet<Integer>>> godzilla, File outFile){	
 		
 		if(outFile == null){
 			return;
 		}
-		
-//		String finalFile = ".\\";
-//		finalFile += outFile.toString();
 		
 		try {
 			File file = new File(outFile.toString());
@@ -163,7 +177,18 @@ public class Driver {
 		}
 	}
 
-	//Takes in word, file, and positions to return FULL STRUCTURE
+	//fullStructure:
+	//combines the various pieces of the structure into a complete nested data structure
+	
+	//in:
+	//(String) wordUpper is the word, case is maintained from the text
+	//(String) file is the name of the file where the word was found
+	//(Integer) position is this individual position of the word
+	//(TreeMap<....>()) godzilla is the full data structure
+	
+	//out:
+	//returns the full TreeMap<String, TreeMap<String, TreeSet<Integer>>> updated structure
+	
 	public static TreeMap<String, TreeMap<String, TreeSet<Integer>>> fullStructure(String wordUpper, String file, 
 				  	int position, TreeMap<String, TreeMap<String, TreeSet<Integer>>> godzilla)
 	{	
@@ -185,7 +210,15 @@ public class Driver {
 		return godzilla;
 	}
 	
-	//Takes in text in file to return a list of words
+	//textToList:
+	//reads each line of the each, seperating it into a string array of words
+	//trims and cleans each word in the array, removing all non alphanumerics
+	//calls fullStructure on each respective word/position pair
+	
+	//in:
+	//(File) input file from the command line
+	//(TreeMap<...>()) godzilla is the full data structure
+	
 	public static void textToList(File file, TreeMap<String, TreeMap<String, TreeSet<Integer>>> godzilla){
 		
 		int positionHolder = 0;
