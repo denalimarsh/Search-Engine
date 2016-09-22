@@ -100,11 +100,11 @@ public class Driver {
 			return;
 		}
 		
-		String finalFile = ".\\";
-		finalFile += outFile.toString();
+//		String finalFile = ".\\";
+//		finalFile += outFile.toString();
 		
 		try {
-			File file = new File(finalFile.toString());
+			File file = new File(outFile.toString());
 			if (!file.exists()) {
 				file.createNewFile();
 			}	
