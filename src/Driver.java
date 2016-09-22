@@ -8,11 +8,9 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
 
 
 public class Driver {
@@ -22,6 +20,11 @@ public class Driver {
     }
 	
 	public static void main (String[] args){
+		
+		for(int i = 0; i < args.length; i++){
+			args[i] = args[i].replaceAll("\\\\", Matcher.quoteReplacement("/"));
+			System.out.println(args[i]);
+		}
 		
 		int deepness = 0;
 		
@@ -68,7 +71,7 @@ public class Driver {
 	public static void traverse(File originalFile, int depth, 
 			 TreeMap<String, TreeMap<String, TreeSet<Integer>>> godzilla, File outFile){
 		
-		TreeSet<Integer> positions = null;
+		
 		File[] theFiles = originalFile.listFiles();
 		 	 
 		boolean b = theFiles instanceof File[];
@@ -89,6 +92,7 @@ public class Driver {
 			}
 		}	 
 	}
+	//3398 mission wallgreens
 	
 	public static void printDataStructureBuffered(TreeMap<String, TreeMap<String, TreeSet<Integer>>> godzilla, File outFile){	
 		
@@ -163,8 +167,7 @@ public class Driver {
 	public static TreeMap<String, TreeMap<String, TreeSet<Integer>>> fullStructure(String wordUpper, String file, 
 				  	int position, TreeMap<String, TreeMap<String, TreeSet<Integer>>> godzilla)
 	{	
-		
-		//TreeSet<Integer> inPosition
+	
 		String word = wordUpper.toLowerCase();
 		
 		if(godzilla.get(word) == null){
