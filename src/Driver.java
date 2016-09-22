@@ -21,10 +21,10 @@ public class Driver {
 	
 	public static void main (String[] args){
 		
-		for(int i = 0; i < args.length; i++){
-			args[i] = args[i].replaceAll("\\\\", Matcher.quoteReplacement("/"));
-			System.out.println(args[i]);
-		}
+//		for(int i = 0; i < args.length; i++){
+//			args[i] = args[i].replaceAll("\\", Matcher.quoteReplacement("/"));
+//			System.out.println(args[i]);
+//		}
 		
 		int deepness = 0;
 		
@@ -92,7 +92,7 @@ public class Driver {
 			}
 		}	 
 	}
-	//3398 mission wallgreens
+	
 	
 	public static void printDataStructureBuffered(TreeMap<String, TreeMap<String, TreeSet<Integer>>> godzilla, File outFile){	
 		
@@ -203,7 +203,7 @@ public class Driver {
 	    			String m = x.trim();
 	    			if(m.compareTo("") != 0){
 	    				positionHolder++;
-	    				godzilla = fullStructure(m, file.toString(), positionHolder, godzilla);	    				
+	    				godzilla = fullStructure(m, path1.normalize().toString(), positionHolder, godzilla);	    				
 	                }	
 		    	}   		            
 		    	line = br.readLine();
