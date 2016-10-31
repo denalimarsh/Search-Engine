@@ -1,5 +1,4 @@
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
@@ -7,10 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class InvertedIndexBuilder {
-	
-	
-	//TODO: Remove printing into different method.
-	
+
 	/**
 	 * Traverses the input directory recursively, locating all folders and files inside.
 	 * If the file is a text file, call the "parseFile" function
@@ -20,30 +16,22 @@ public class InvertedIndexBuilder {
 	 * @param outPath - the final destination for the inverted index to be written to
 	 */
 	
-	//TODO: Remove use of File.io package
 	public static void traverse(Path originalPath, InvertedIndex index, Path outPath) {
 
 		 try (DirectoryStream<Path> listing = Files.newDirectoryStream(originalPath)) {
 			 for (Path path : listing) {
-	                
-	                File fileName = path.toFile();
                 	String extension = "";
-                	int i =  (fileName.toString()).lastIndexOf('.');
+                	int i =  (path.toString()).lastIndexOf('.');
                 	if (i > 0) {
-                	    extension = fileName.toString().substring(i+1);
+                	    extension = path.toString().substring(i+1);
                 	}
 	                if (Files.isDirectory(path)) {
 	                    traverse(path, index, outPath);
 	                }
-	                
-	                //TODO: What if extension is .tXt or .tXT
-	                else if (extension.equals("txt")||extension.equals("TXT")){
+	                else if (extension.equalsIgnoreCase("txt")){
 	                		parseFile(path, index);
 	                }
 	         }
-			 if(outPath != null){
-				 InvertedIndex.print(index, outPath);
-			 }
 		 } catch (IOException e) {
 			e.printStackTrace();
 		}

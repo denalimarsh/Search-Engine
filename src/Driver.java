@@ -1,18 +1,8 @@
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Driver {
-
-	//TODO: Remove this method
-	/**
-	 * Quotes any string given to the function
-	 * 
-	 * @param text - the string to be quoted
-	 * @return - the string within quotes
-	 */
-	public static String quote(String text) {
-		return String.format("\"%s\"", text);
-	}
 
 	/**
 	 * The main driver method which reads in the input arguments,
@@ -21,8 +11,9 @@ public class Driver {
 	 * 
 	 * @param args - the command line arguments which designate 
 	 * 				 where the input and output paths are
+	 * @throws IOException 
 	 */
-	public static void main(String[] args) {		
+	public static void main(String[] args) throws IOException {		
 
 		Path inPath = null;
 		Path outPath = null;
@@ -45,6 +36,10 @@ public class Driver {
 		if (inPath != null) {
 			System.out.println(inPath.toString());
 			InvertedIndexBuilder.traverse(inPath, bigIndex, outPath);	
+			if(outPath != null){
+				InvertedIndex.print(bigIndex, outPath);
+			}
+			
 		}
 	}
 }

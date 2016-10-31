@@ -1,8 +1,6 @@
 import java.util.HashMap;
 import java.util.Map;
 
-
-//TODO: Remove old TODO statements when no longer necessary
 /**
  * Parses and stores an array of argument into flag, value pairs for easy access
  * later. Useful to parse command-line arguments.
@@ -19,7 +17,6 @@ public class ArgumentParser {
      */
     public ArgumentParser() {
         argumentMap = new HashMap<String, String>();
-        // TODO: Update this!
     }
 
     /**
@@ -31,7 +28,6 @@ public class ArgumentParser {
      * @see #parseArguments(String[])
      */
     public ArgumentParser(String[] args) {
-        // You do not need to modify this method.
         this();
         parseArguments(args);
     }
@@ -48,8 +44,7 @@ public class ArgumentParser {
      * @see #isFlag(String)
      * @see #isValue(String)
      */
-    public void parseArguments(String[] args) {
-    	
+    public void parseArguments(String[] args) { 	
     	for(int i = 0; i < args.length; i++){
     			if(isFlag(args[i])){
     	    		if(i + 1 < args.length){
@@ -62,8 +57,7 @@ public class ArgumentParser {
         		}else{
         			argumentMap.put(args[i], null);
         		}
-    		}
-    		
+    		} 		
     	}
     }
 
@@ -105,8 +99,7 @@ public class ArgumentParser {
      * @return number of flags
      */
     public int numFlags() {
-    	int numFlags = 0;
-    	
+    	int numFlags = 0; 	
     	for (Map.Entry<String, String> entry : argumentMap.entrySet())
     	{
     		if(entry.getKey() != null){
@@ -130,7 +123,7 @@ public class ArgumentParser {
     			return true;
     		}
     	}
-        return false; // TODO: Update this.
+        return false;
     }
 
     /**
@@ -146,11 +139,10 @@ public class ArgumentParser {
     		if(entry.getKey() == flag){
     			if(entry.getValue() != null){
     				return true;
-    			}
-    			
+    			}		
     		}
     	}
-        return false; // TODO: Update this.
+        return false;
     }
 
     /**
@@ -196,9 +188,7 @@ public class ArgumentParser {
         		}
         	}
     	}
-
-    	return defaultValue;
-    	
+    	return defaultValue;   	
     }
 
     /**
@@ -224,13 +214,11 @@ public class ArgumentParser {
     	}catch(Exception e){
     		return defaultValue;
     	}
-    	
-    	return defaultValue; // TODO: Update this.
+    	return defaultValue; 
     }
 
     @Override
     public String toString() {
-        // You do not need to modify this method.
         return argumentMap.toString();
     }
 }

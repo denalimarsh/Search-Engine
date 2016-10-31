@@ -9,13 +9,10 @@ import java.util.TreeSet;
 
 public class InvertedIndex {
 
-	//TODO: Should not be static
-	//TODO: But should be final
-	private static TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndexy;
+	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex;
 
-	//TODO: fix name
 	public InvertedIndex() {
-		invertedIndexy = new TreeMap<String, TreeMap<String, TreeSet<Integer>>>();
+		invertedIndex = new TreeMap<String, TreeMap<String, TreeSet<Integer>>>();
 	}
 	
 	/**
@@ -31,16 +28,16 @@ public class InvertedIndex {
 		
 		String word = wordUpper.toLowerCase();
 		
-		if (invertedIndexy.get(word) == null) {
-			invertedIndexy.put(word, new TreeMap<String, TreeSet<Integer>>());
-			invertedIndexy.get(word).put(file, new TreeSet<Integer>());
-			invertedIndexy.get(word).get(file).add(position);
+		if (invertedIndex.get(word) == null) {
+			invertedIndex.put(word, new TreeMap<String, TreeSet<Integer>>());
+			invertedIndex.get(word).put(file, new TreeSet<Integer>());
+			invertedIndex.get(word).get(file).add(position);
 		} else {
-			if (invertedIndexy.get(word).get(file) == null) {
-				invertedIndexy.get(word).put(file, new TreeSet<Integer>());
-				invertedIndexy.get(word).get(file).add(position);
+			if (invertedIndex.get(word).get(file) == null) {
+				invertedIndex.get(word).put(file, new TreeSet<Integer>());
+				invertedIndex.get(word).get(file).add(position);
 			} else {
-				invertedIndexy.get(word).get(file).add(position);
+				invertedIndex.get(word).get(file).add(position);
 			}
 		}
 	}
@@ -110,32 +107,18 @@ public class InvertedIndex {
 	 * 
 	 * @return the navigable keySet
 	 */
-	public NavigableSet<String> getKeySet(){
-		return invertedIndexy.navigableKeySet();
+	private NavigableSet<String> getKeySet(){
+		return invertedIndex.navigableKeySet();
 	}
 	
-	
-	
-	//TODO: Breaking encapsulation
-	//TODO: Remove this method
 	/**
 	 * 
 	 * @param key - the word which is mapped to the second treeMap
 	 * @return the second keyMap
 	 */
-	public TreeMap<String, TreeSet<Integer>> getKey(String key){
-		TreeMap<String, TreeSet<Integer>> mappy = invertedIndexy.get(key);
+	private TreeMap<String, TreeSet<Integer>> getKey(String key){
+		TreeMap<String, TreeSet<Integer>> mappy = invertedIndex.get(key);
 		return mappy;
-	}
-	
-	//TODO: Only returns false, so have it do something
-	/**
-	 * 
-	 * @param word - the word to be searched for in the inverted index
-	 * @return boolean true or false for contains word
-	 */
-	public boolean containsWord(String word) {
-		return false;
 	}
 	
 	/**
@@ -148,8 +131,11 @@ public class InvertedIndex {
 		return String.format("\"%s\"", text);
 	}
 	
+	/**
+	 * @return the Inverted Index as a string
+	 */
 	@Override
 	public String toString() {
-		return invertedIndexy.toString();
+		return invertedIndex.toString();
 	}
 }
