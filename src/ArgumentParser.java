@@ -1,6 +1,8 @@
 import java.util.HashMap;
 import java.util.Map;
 
+
+//TODO: Remove old TODO statements when no longer necessary
 /**
  * Parses and stores an array of argument into flag, value pairs for easy access
  * later. Useful to parse command-line arguments.

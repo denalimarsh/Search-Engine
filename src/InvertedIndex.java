@@ -9,8 +9,11 @@ import java.util.TreeSet;
 
 public class InvertedIndex {
 
+	//TODO: Should not be static
+	//TODO: But should be final
 	private static TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndexy;
 
+	//TODO: fix name
 	public InvertedIndex() {
 		invertedIndexy = new TreeMap<String, TreeMap<String, TreeSet<Integer>>>();
 	}
@@ -100,6 +103,8 @@ public class InvertedIndex {
 		}
 	}
 	
+	
+	//TODO: Remove this too
 	/**
 	 * Returns a navigable keySet from the inverted index
 	 * 
@@ -109,6 +114,10 @@ public class InvertedIndex {
 		return invertedIndexy.navigableKeySet();
 	}
 	
+	
+	
+	//TODO: Breaking encapsulation
+	//TODO: Remove this method
 	/**
 	 * 
 	 * @param key - the word which is mapped to the second treeMap
@@ -119,6 +128,7 @@ public class InvertedIndex {
 		return mappy;
 	}
 	
+	//TODO: Only returns false, so have it do something
 	/**
 	 * 
 	 * @param word - the word to be searched for in the inverted index

@@ -8,6 +8,9 @@ import java.nio.file.Path;
 
 public class InvertedIndexBuilder {
 	
+	
+	//TODO: Remove printing into different method.
+	
 	/**
 	 * Traverses the input directory recursively, locating all folders and files inside.
 	 * If the file is a text file, call the "parseFile" function
@@ -16,6 +19,8 @@ public class InvertedIndexBuilder {
 	 * @param index - the inverted index to be added to
 	 * @param outPath - the final destination for the inverted index to be written to
 	 */
+	
+	//TODO: Remove use of File.io package
 	public static void traverse(Path originalPath, InvertedIndex index, Path outPath) {
 
 		 try (DirectoryStream<Path> listing = Files.newDirectoryStream(originalPath)) {
@@ -30,6 +35,8 @@ public class InvertedIndexBuilder {
 	                if (Files.isDirectory(path)) {
 	                    traverse(path, index, outPath);
 	                }
+	                
+	                //TODO: What if extension is .tXt or .tXT
 	                else if (extension.equals("txt")||extension.equals("TXT")){
 	                		parseFile(path, index);
 	                }
