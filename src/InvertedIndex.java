@@ -100,8 +100,6 @@ public class InvertedIndex {
 		}
 	}
 	
-	
-	//TODO: Remove this too
 	/**
 	 * Returns a navigable keySet from the inverted index
 	 * 
@@ -139,4 +137,6 @@ public class InvertedIndex {
 	public String toString() {
 		return invertedIndex.toString();
 	}
+	
 }
+
