@@ -48,6 +48,7 @@ public class InvertedIndexBuilder {
 	 * @throws IOException - thrown if the bufferedReader is unable to write to the 
 	 * 						 designated path
 	 */
+	
 	public static void parseFile(Path path, InvertedIndex index) throws IOException {
 
 		int positionHolder = 0;

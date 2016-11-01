@@ -32,6 +32,7 @@ public class Driver {
 				}
 			}
 		}
+		
 		InvertedIndex bigIndex = new InvertedIndex();
 		if (inPath != null) {
 			System.out.println(inPath.toString());

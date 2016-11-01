@@ -203,6 +203,7 @@ public class ArgumentParser {
      * @return value of flag as an integer or {@code defaultValue} if the value
      *         cannot be returned as an integer
      */
+    
     public int getValue(String flag, int defaultValue) {
     	try{
     		for (Map.Entry<String, String> entry : argumentMap.entrySet())
