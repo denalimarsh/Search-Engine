@@ -15,6 +15,7 @@ public class ArgumentParser {
     /**
      * Creates a new and empty argument parser.
      */
+    
     public ArgumentParser() {
         argumentMap = new HashMap<String, String>();
     }

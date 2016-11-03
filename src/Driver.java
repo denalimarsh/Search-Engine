@@ -27,17 +27,16 @@ public class Driver {
 						inPath = Paths.get(parser.getValue(args[i]));
 					}
 				}else if(args[i].equals("-index")){
-						String indexy = parser.getValue("-index", "index.json");
-						outPath = Paths.get(indexy);
+						String indexHolder = parser.getValue("-index", "index.json");
+						outPath = Paths.get(indexHolder);
 				}
 			}
 		}
-		InvertedIndex bigIndex = new InvertedIndex();
+		InvertedIndex mainInvertedIndex = new InvertedIndex();
 		if (inPath != null) {
-			System.out.println(inPath.toString());
-			InvertedIndexBuilder.traverse(inPath, bigIndex, outPath);	
+			InvertedIndexBuilder.traverse(inPath, mainInvertedIndex, outPath);	
 			if(outPath != null){
-				InvertedIndex.print(bigIndex, outPath);
+				mainInvertedIndex.print(outPath);
 			}
 			
 		}

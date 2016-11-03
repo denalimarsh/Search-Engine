@@ -52,7 +52,6 @@ public class InvertedIndexBuilder {
 	public static void parseFile(Path path, InvertedIndex index) throws IOException {
 
 		int positionHolder = 0;
-		Path path1 = path;
 		
 			try (BufferedReader br = Files.newBufferedReader(path, Charset.forName("UTF-8"))) {
 		        String line = br.readLine();
@@ -65,7 +64,7 @@ public class InvertedIndexBuilder {
 						String m = x.trim();
 						if (m.compareTo("") != 0) {
 							positionHolder++;
-							index.add(m, path1.normalize().toString(), positionHolder);
+							index.add(m, path.normalize().toString(), positionHolder);
 						}
 					}
 					line = br.readLine();
@@ -73,7 +72,7 @@ public class InvertedIndexBuilder {
 				br.close();			
 			} catch (IOException ex) {
 				System.out.println(ex.toString());
-				System.out.println("Could not find file " + path1.toString());
+				System.out.println("Could not find file " + path.toString());
 			}
 	    }
 	}

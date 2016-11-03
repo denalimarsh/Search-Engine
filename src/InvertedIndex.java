@@ -3,7 +3,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.NavigableSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -24,20 +23,20 @@ public class InvertedIndex {
 	 * @param file - the file which the specified word is located within
 	 * @param position - the location of the word within the designated file
 	 */
-	public void add(String wordUpper, String file, int position) {
+	public void add(String wordUpper, String path, int position) {
 		
 		String word = wordUpper.toLowerCase();
 		
 		if (invertedIndex.get(word) == null) {
 			invertedIndex.put(word, new TreeMap<String, TreeSet<Integer>>());
-			invertedIndex.get(word).put(file, new TreeSet<Integer>());
-			invertedIndex.get(word).get(file).add(position);
+			invertedIndex.get(word).put(path, new TreeSet<Integer>());
+			invertedIndex.get(word).get(path).add(position);
 		} else {
-			if (invertedIndex.get(word).get(file) == null) {
-				invertedIndex.get(word).put(file, new TreeSet<Integer>());
-				invertedIndex.get(word).get(file).add(position);
+			if (invertedIndex.get(word).get(path) == null) {
+				invertedIndex.get(word).put(path, new TreeSet<Integer>());
+				invertedIndex.get(word).get(path).add(position);
 			} else {
-				invertedIndex.get(word).get(file).add(position);
+				invertedIndex.get(word).get(path).add(position);
 			}
 		}
 	}
@@ -52,39 +51,39 @@ public class InvertedIndex {
 	 * @throws IOException - the exception through if the bufferedReader is 
 	 * 						 unable to print to the path
 	 */
-	public static void print(InvertedIndex index, Path path) throws IOException {
+	public void print(Path path) throws IOException {
 			
 		try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, Charset.forName("UTF-8"));) {
 			bufferedWriter.write("{\n");
 			
 			int holderOne = 0;
-			for (String key : index.getKeySet()) {
+			for (String key : invertedIndex.keySet()) {
 				if (key.compareTo("") != 0) {
 					bufferedWriter.write("\t" + quote(key) + ": {\n");
 					
-					TreeMap<String, TreeSet<Integer>> mappy = index.getKey(key);
+					TreeMap<String, TreeSet<Integer>> map = invertedIndex.get(key);
 					int holderTwo = 0;
-					for (String fileName : mappy.navigableKeySet()) {
+					for (String fileName : map.navigableKeySet()) {
 						bufferedWriter.write("\t\t" + quote(fileName) + ": [\n");
 					
-						TreeSet<Integer> setty = mappy.get(fileName);
+						TreeSet<Integer> set = map.get(fileName);
 						int holderThree = 0;
-						for (int a : setty) {
-							if (holderThree == setty.size() - 1) {
+						for (int a : set) {
+							if (holderThree == set.size() - 1) {
 								bufferedWriter.write("\t\t\t" + a + "\n");
 							} else {
 								bufferedWriter.write("\t\t\t" + a + ",\n");
 							}
 							holderThree++;
 						}
-						if (holderTwo == mappy.navigableKeySet().size() - 1) {
+						if (holderTwo == map.navigableKeySet().size() - 1) {
 							bufferedWriter.write("\t\t]\n");
 						} else {
 							bufferedWriter.write("\t\t],\n");
 						}
 						holderTwo++;
 					}
-					if (holderOne == index.getKeySet().size() - 1) {
+					if (holderOne == invertedIndex.keySet().size() - 1) {
 						bufferedWriter.write("\t}\n");
 					} else {
 						bufferedWriter.write("\t},\n");
@@ -98,26 +97,6 @@ public class InvertedIndex {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	/**
-	 * Returns a navigable keySet from the inverted index
-	 * 
-	 * @return the navigable keySet
-	 */
-	private NavigableSet<String> getKeySet(){
-		return invertedIndex.navigableKeySet();
-	}
-	
-	
-	/**
-	 * 
-	 * @param key - the word which is mapped to the second treeMap
-	 * @return the second keyMap
-	 */
-	private TreeMap<String, TreeSet<Integer>> getKey(String key){
-		TreeMap<String, TreeSet<Integer>> mappy = invertedIndex.get(key);
-		return mappy;
 	}
 	
 	/**
