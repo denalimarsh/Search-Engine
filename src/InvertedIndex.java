@@ -10,6 +10,9 @@ public class InvertedIndex {
 
 	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex;
 
+	/**
+	 * TODO
+	 */
 	public InvertedIndex() {
 		invertedIndex = new TreeMap<String, TreeMap<String, TreeSet<Integer>>>();
 	}
@@ -56,18 +59,21 @@ public class InvertedIndex {
 		try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, Charset.forName("UTF-8"));) {
 			bufferedWriter.write("{\n");
 			
-			int holderOne = 0;
+			int holderOne = 0; // TODO keys
 			for (String key : invertedIndex.keySet()) {
+				// TODO Hopefully should not be putting the empty string into the index...
 				if (key.compareTo("") != 0) {
 					bufferedWriter.write("\t" + quote(key) + ": {\n");
 					
 					TreeMap<String, TreeSet<Integer>> map = invertedIndex.get(key);
-					int holderTwo = 0;
+					
+					int holderTwo = 0; // TODO files
 					for (String fileName : map.navigableKeySet()) {
 						bufferedWriter.write("\t\t" + quote(fileName) + ": [\n");
 					
 						TreeSet<Integer> set = map.get(fileName);
-						int holderThree = 0;
+						int holderThree = 0; // TODO positions
+						
 						for (int a : set) {
 							if (holderThree == set.size() - 1) {
 								bufferedWriter.write("\t\t\t" + a + "\n");
@@ -76,6 +82,7 @@ public class InvertedIndex {
 							}
 							holderThree++;
 						}
+						
 						if (holderTwo == map.navigableKeySet().size() - 1) {
 							bufferedWriter.write("\t\t]\n");
 						} else {
@@ -83,6 +90,7 @@ public class InvertedIndex {
 						}
 						holderTwo++;
 					}
+					
 					if (holderOne == invertedIndex.keySet().size() - 1) {
 						bufferedWriter.write("\t}\n");
 					} else {
@@ -91,10 +99,11 @@ public class InvertedIndex {
 					holderOne++;
 				}
 			}
-			bufferedWriter.write("}");		
+			bufferedWriter.write("}");
 			bufferedWriter.flush();
 			bufferedWriter.close();
 		} catch (IOException e) {
+			// TODO Output user-friendly (informative) error messages 
 			e.printStackTrace();
 		}
 	}
@@ -117,5 +126,7 @@ public class InvertedIndex {
 		return invertedIndex.toString();
 	}
 	
+	// TODO Need to think more generally about what other methods are useful for an inverted index
+	// TODO Contains methods or numWords, etc. would be good to add
 }
 

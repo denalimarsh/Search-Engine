@@ -13,13 +13,14 @@ public class Driver {
 	 * 				 where the input and output paths are
 	 * @throws IOException 
 	 */
-	public static void main(String[] args) throws IOException {		
+	public static void main(String[] args) throws IOException {		// TODO Cannot throw exceptions from main
 
 		Path inPath = null;
 		Path outPath = null;
 		
 		ArgumentParser parser = new ArgumentParser(args);
 		
+		// TODO Should not need this loop at all?
 		for (int i = 0; i < args.length; i++) {
 			if(parser.hasFlag(args[i])){
 				if(args[i].equals("-dir")){
@@ -32,11 +33,26 @@ public class Driver {
 				}
 			}
 		}
-		InvertedIndex mainInvertedIndex = new InvertedIndex();
+		
+		// TODO Refactor to just "index" or something shorter
+		InvertedIndex index = new InvertedIndex();
+		
+		/* TODO
+		if (parser.hasFlag("-dir")) {
+			do stuff
+		}
+		
+		if (parser.hasFlag("-index")) {
+			Path output = parser.getValue("-index", "index.json");
+			do stuff
+		}
+		*/
+		
 		if (inPath != null) {
-			InvertedIndexBuilder.traverse(inPath, mainInvertedIndex, outPath);	
+			InvertedIndexBuilder.traverse(inPath, index, outPath);
+			
 			if(outPath != null){
-				mainInvertedIndex.print(outPath);
+				index.print(outPath);
 			}
 			
 		}
