@@ -20,12 +20,15 @@ public class InvertedIndexBuilder {
 
 		 try (DirectoryStream<Path> listing = Files.newDirectoryStream(originalPath)) {
 			 for (Path path : listing) {
+				 // TODO if (path.toString().toLowerCase().endsWith(".txt")), then parseFile
+				 
+				 
                 	String extension = "";
                 	int i =  (path.toString()).lastIndexOf('.');
                 	if (i > 0) {
                 	    extension = path.toString().substring(i+1);
                 	}
-	                if (Files.isDirectory(path)) {
+	                if (Files.isDirectory(path)) { // TODO Still need this check
 	                    traverse(path, index, outPath);
 	                }
 	                else if (extension.equalsIgnoreCase("txt")){
@@ -33,6 +36,7 @@ public class InvertedIndexBuilder {
 	                }
 	         }
 		 } catch (IOException e) {
+			 // TODO Fix this
 			e.printStackTrace();
 		}
 	}
@@ -54,24 +58,34 @@ public class InvertedIndexBuilder {
 		int positionHolder = 0;
 		
 			try (BufferedReader br = Files.newBufferedReader(path, Charset.forName("UTF-8"))) {
+				// TODO Save the normalized toString path here
+				
 		        String line = br.readLine();
 				while ((line) != null) {
-					String[] words = line.split(" ");
+					String[] words = line.split(" "); // TODO split("\\s+")
 					String x = null;
+					// TODO 1 letter variable names are really only used for counters in for statements
+					
 					for (int i = 0; i < words.length; i++) {
 						String holder = words[i];
-						x = holder.replaceAll("\\p{Punct}+", "");
+						x = holder.replaceAll("\\p{Punct}+", ""); // TODO String cleaned instead of x
 						String m = x.trim();
+						// TODO if (!cleaned.isEmpty()) then add
 						if (m.compareTo("") != 0) {
 							positionHolder++;
+							// TODO Constantly normalize and toString the path... which takes time but never changes
 							index.add(m, path.normalize().toString(), positionHolder);
 						}
 					}
 					line = br.readLine();
 				}
-				br.close();			
+				br.close(); // TODO Don't need anymore?
 			} catch (IOException ex) {
+				
+				// TODO ex.ToString() will still not be understandable to users
 				System.out.println(ex.toString());
+				
+				// TODO Something like this is closer... "Unable to parse " + path + " into index."
 				System.out.println("Could not find file " + path.toString());
 			}
 	    }
