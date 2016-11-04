@@ -8,85 +8,70 @@ import java.nio.file.Path;
 public class InvertedIndexBuilder {
 
 	/**
-	 * Traverses the input directory recursively, locating all folders and files inside.
-	 * If the file is a text file, call the "parseFile" function
+	 * Traverses the input directory recursively, locating all folders and files
+	 * inside. If the file is a text file, call the "parseFile" function
 	 * 
-	 * @param originalPath - the original input directory to be searched
-	 * @param index - the inverted index to be added to
-	 * @param outPath - the final destination for the inverted index to be written to
+	 * @param originalPath
+	 *            - the original input directory to be searched
+	 * @param index
+	 *            - the inverted index to be added to
+	 * @param outPath
+	 *            - the final destination for the inverted index to be written
+	 *            to
 	 */
-	
-	public static void traverse(Path originalPath, InvertedIndex index, Path outPath) {
 
-		 try (DirectoryStream<Path> listing = Files.newDirectoryStream(originalPath)) {
-			 for (Path path : listing) {
-				 // TODO if (path.toString().toLowerCase().endsWith(".txt")), then parseFile
-				 
-				 
-                	String extension = "";
-                	int i =  (path.toString()).lastIndexOf('.');
-                	if (i > 0) {
-                	    extension = path.toString().substring(i+1);
-                	}
-	                if (Files.isDirectory(path)) { // TODO Still need this check
-	                    traverse(path, index, outPath);
-	                }
-	                else if (extension.equalsIgnoreCase("txt")){
-	                		parseFile(path, index);
-	                }
-	         }
-		 } catch (IOException e) {
-			 // TODO Fix this
-			e.printStackTrace();
+	public static void traverse(Path originalPath, InvertedIndex index) {
+		try (DirectoryStream<Path> listing = Files.newDirectoryStream(originalPath)) {
+			for (Path path : listing) {
+				if (Files.isDirectory(path)) {
+					traverse(path, index);
+				} else if (path.toString().toLowerCase().endsWith(".txt")) {
+					parseFile(path, index);
+				}
+			}
+		} catch (IOException e) {
+			System.out.println("Unable to access " + originalPath.toString() + " to parse.");
 		}
 	}
-	
+
 	/**
 	 * 
-	 * Reads a text file in line by line, 'cleaning' the words as it goes by removing
-	 * all non-alphanumeric characters. For each cleaned word, add it to the inverted 
-	 * index.
+	 * Reads a text file in line by line, 'cleaning' the words as it goes by
+	 * removing all non-alphanumeric characters. For each cleaned word, add it
+	 * to the inverted index.
 	 * 
-	 * @param path - the text file to be read in
-	 * @param index - the inverted index to be added to
-	 * @throws IOException - thrown if the bufferedReader is unable to write to the 
-	 * 						 designated path
+	 * @param path
+	 *            - the text file to be read in
+	 * @param index
+	 *            - the inverted index to be added to
+	 * @throws IOException
+	 *             - thrown if the bufferedReader is unable to write to the
+	 *             designated path
 	 */
-	
-	public static void parseFile(Path path, InvertedIndex index) throws IOException {
 
+	public static void parseFile(Path path, InvertedIndex index) {
+
+		String pathName = path.normalize().toString();
 		int positionHolder = 0;
-		
-			try (BufferedReader br = Files.newBufferedReader(path, Charset.forName("UTF-8"))) {
-				// TODO Save the normalized toString path here
-				
-		        String line = br.readLine();
-				while ((line) != null) {
-					String[] words = line.split(" "); // TODO split("\\s+")
-					String x = null;
-					// TODO 1 letter variable names are really only used for counters in for statements
-					
-					for (int i = 0; i < words.length; i++) {
-						String holder = words[i];
-						x = holder.replaceAll("\\p{Punct}+", ""); // TODO String cleaned instead of x
-						String m = x.trim();
-						// TODO if (!cleaned.isEmpty()) then add
-						if (m.compareTo("") != 0) {
-							positionHolder++;
-							// TODO Constantly normalize and toString the path... which takes time but never changes
-							index.add(m, path.normalize().toString(), positionHolder);
-						}
+
+		try (BufferedReader br = Files.newBufferedReader(path, Charset.forName("UTF-8"))) {
+			String line = br.readLine();
+			while ((line) != null) {
+				String[] words = line.split("\\s+");
+				String cleanedWord = null;
+				for (int i = 0; i < words.length; i++) {
+					String holder = words[i];
+					cleanedWord = holder.replaceAll("\\p{Punct}+", "");
+					String trimmedWord = cleanedWord.trim();
+					if (!cleanedWord.isEmpty()) {
+						positionHolder++;
+						index.add(trimmedWord, pathName, positionHolder);
 					}
-					line = br.readLine();
 				}
-				br.close(); // TODO Don't need anymore?
-			} catch (IOException ex) {
-				
-				// TODO ex.ToString() will still not be understandable to users
-				System.out.println(ex.toString());
-				
-				// TODO Something like this is closer... "Unable to parse " + path + " into index."
-				System.out.println("Could not find file " + path.toString());
+				line = br.readLine();
 			}
-	    }
+		} catch (IOException ex) {
+			System.out.println("Unable to parse " + pathName + " into an inverted index.");
+		}
 	}
+}

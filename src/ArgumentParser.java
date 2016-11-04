@@ -1,8 +1,6 @@
 import java.util.HashMap;
 import java.util.Map;
 
-// TODO Need to re-indent this file
-
 /**
  * Parses and stores an array of argument into flag, value pairs for easy access
  * later. Useful to parse command-line arguments.
@@ -46,20 +44,19 @@ public class ArgumentParser {
 	 * @see #isFlag(String)
 	 * @see #isValue(String)
 	 */
-	public void parseArguments(String[] args) { 	
-		for(int i = 0; i < args.length; i++){
-			if(isFlag(args[i])){
-				if(i + 1 < args.length){
-					if(isValue(args[i+1])){
-						argumentMap.put(args[i], args[i+1]);
-					}
-					else{
+	public void parseArguments(String[] args) {
+		for (int i = 0; i < args.length; i++) {
+			if (isFlag(args[i])) {
+				if (i + 1 < args.length) {
+					if (isValue(args[i + 1])) {
+						argumentMap.put(args[i], args[i + 1]);
+					} else {
 						argumentMap.put(args[i], null);
 					}
-				}else{
+				} else {
 					argumentMap.put(args[i], null);
 				}
-			} 		
+			}
 		}
 	}
 
@@ -74,12 +71,7 @@ public class ArgumentParser {
 	 */
 	public static boolean isFlag(String arg) {
 		String trimmed = arg.trim();
-		// TODO return trimmed.startsWith("-") && trimmed.length() > 1;
-		
-		if(trimmed.startsWith("-") && !arg.trim().isEmpty() && arg.trim().length() > 1 ){
-			return true;
-		}
-		return false; 
+		return (trimmed.startsWith("-") && arg.trim().length() > 1);
 	}
 
 	/**
@@ -91,10 +83,7 @@ public class ArgumentParser {
 	 * @return {@code true} if the argument is a valid value
 	 */
 	public static boolean isValue(String arg) {
-		if(!arg.startsWith("-") && arg != null && !arg.trim().isEmpty()){ // TODO Return this directly
-			return true;
-		}
-		return false;
+		return (!arg.startsWith("-") && !arg.trim().isEmpty());
 	}
 
 	/**
@@ -103,16 +92,7 @@ public class ArgumentParser {
 	 * @return number of flags
 	 */
 	public int numFlags() {
-		// TODO argumentMap.size()
-		
-		int numFlags = 0; 	
-		for (Map.Entry<String, String> entry : argumentMap.entrySet())
-		{
-			if(entry.getKey() != null){
-				numFlags++;
-			}
-		}
-		return numFlags;
+		return argumentMap.size();
 	}
 
 	/**
@@ -123,13 +103,8 @@ public class ArgumentParser {
 	 * @return {@code true} if flag exists
 	 */
 	public boolean hasFlag(String flag) {
-		// TODO Use proper map methods do not iterate here!
-		
-		for (Map.Entry<String, String> entry : argumentMap.entrySet())
-		{
-			if(entry.getKey() == flag){
-				return true;
-			}
+		if (argumentMap.containsKey(flag)) {
+			return true;
 		}
 		return false;
 	}
@@ -142,15 +117,9 @@ public class ArgumentParser {
 	 * @return {@code true} if the flag exists and has a non-null value
 	 */
 	public boolean hasValue(String flag) {
-		// TODO No iteration
-		
-		for (Map.Entry<String, String> entry : argumentMap.entrySet())
-		{
-			if(entry.getKey() == flag){
-				if(entry.getValue() != null){
-					return true;
-				}		
-			}
+
+		if (argumentMap.keySet().contains(flag) && (argumentMap.get(flag) != null)) {
+			return true;
 		}
 		return false;
 	}
@@ -165,13 +134,8 @@ public class ArgumentParser {
 	 *         not exist
 	 */
 	public String getValue(String flag) {
-		// TODO No iteration
-		
-		for (Map.Entry<String, String> entry : argumentMap.entrySet())
-		{
-			if(entry.getKey() == flag){
-				return entry.getValue();
-			}
+		if (argumentMap.containsKey(flag)) {
+			return argumentMap.get(flag);
 		}
 		return null;
 	}
@@ -188,21 +152,10 @@ public class ArgumentParser {
 	 *         the value is {@code null}
 	 */
 	public String getValue(String flag, String defaultValue) {
-		// TODO No iteration
-		
-		if(hasFlag(flag)){
-			for (Map.Entry<String, String> entry : argumentMap.entrySet())
-			{
-				if(entry.getKey() == flag){
-					if(entry.getValue() != null){
-						return entry.getValue();
-					}else{
-						return defaultValue;
-					}
-				}
-			}
+		if (argumentMap.containsKey(flag) && argumentMap.get(flag) != null) {
+			return argumentMap.get(flag);
 		}
-		return defaultValue;   	
+		return defaultValue;
 	}
 
 	/**
@@ -219,21 +172,17 @@ public class ArgumentParser {
 	 */
 
 	public int getValue(String flag, int defaultValue) {
-		// TODO No iteration
-		
-		try{
-			for (Map.Entry<String, String> entry : argumentMap.entrySet())
-			{
-				if(entry.getKey() == flag){
-					return Integer.parseInt(entry.getKey());
-				}
-			}
-		}catch(Exception e){
-			return defaultValue;
+		if (argumentMap.containsKey(flag) && argumentMap.get(flag) != null) {
+			return Integer.parseInt(argumentMap.get(flag));
 		}
-		return defaultValue; 
+		return defaultValue;
 	}
 
+	/**
+	 * Returns the argument map as a String for viewing the data quickly
+	 * 
+	 * @return the argument map as a string
+	 */
 	@Override
 	public String toString() {
 		return argumentMap.toString();
