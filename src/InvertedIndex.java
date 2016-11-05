@@ -3,13 +3,19 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class InvertedIndex {
 
 	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> invertedIndex;
+	private String stringQuery;
 
+	
 	/**
 	 * TODO
 	 */
@@ -46,7 +52,88 @@ public class InvertedIndex {
 			}
 		}
 	}
+	
+	public void addWord(String wordUpper) {
 
+		String word = wordUpper.toLowerCase();
+
+		if (invertedIndex.get(word) == null) {
+			invertedIndex.put(word, new TreeMap<String, TreeSet<Integer>>());
+		} 
+	}
+
+	
+	public void printQueryIndex(BufferedWriter bufferedWriter){
+		try {
+			TreeSet<PrintResult> resultSet = new TreeSet<>();
+			TreeMap<String, PrintResult> resultMap = new TreeMap<>();
+			
+			int a = invertedIndex.keySet().size();
+			
+			for(String key: invertedIndex.keySet()){			
+				
+				TreeMap<String, TreeSet<Integer>> files = invertedIndex.get(key);
+				for (String fileName : files.navigableKeySet()){
+					if(!resultMap.containsKey(fileName)){
+						
+						PrintResult printResult = new PrintResult();
+						
+						TreeSet<Integer> set = files.get(fileName);
+						
+						
+						int count = set.size();
+						int position = -1;
+						position = Collections.min(set);
+	
+						printResult.setFile(fileName);
+						printResult.setCount(count);
+						printResult.setPosition(position);
+						
+						resultSet.add(printResult);
+						resultMap.put(fileName, printResult);
+					}else{
+						PrintResult printResult = resultMap.get(fileName);
+						TreeSet<Integer> set = files.get(fileName);
+						
+						int count = set.size();
+						int position = -1;
+						position = Collections.min(set);
+						
+						int currentCount = printResult.getCount();
+						printResult.setCount(currentCount + count);
+						
+						int currentPosition = printResult.getPosition();
+						int minValue = Math.min(currentPosition, position);
+						printResult.setPosition(minValue);	
+					}
+				}
+			}	
+			
+			TreeSet<PrintResult> finalResult = new TreeSet<>();
+			for (PrintResult curr : resultSet) {
+				finalResult.add(curr);
+			}
+			
+			bufferedWriter.write("\t" + quote(stringQuery) + ": [");
+			
+			int i = 0;
+			for(PrintResult printResult: finalResult){
+				i++;
+				if(i == finalResult.size()){
+					bufferedWriter.write(printResult.toString());
+				}else{
+					bufferedWriter.write(printResult.toString() + ",");
+				}
+			}
+		
+			
+		} catch (Exception e) {
+			System.out.println("Unable to print the inverted index to location");
+		}
+	}
+	
+	
+	
 	/**
 	 * Prints the inverted index by iterating through the TreeMap of words, the
 	 * TreeMap of files, and the TreeSet of integer positions, writing them to
@@ -107,6 +194,76 @@ public class InvertedIndex {
 			System.out.println("Unable to print the inverted index to location " + quote(path.toString()));
 		}
 	}
+	
+	/**
+	 * 
+	 * @param importMap
+	 * @return
+	 */
+	public ArrayList<Query> exactSearch(ArrayList<String> fullQueries){
+		 
+		int numbWords;
+		
+		ArrayList<Query> queryList = new ArrayList<>();
+		
+		for(String stringQuery: fullQueries){
+			
+			Query query = new Query(stringQuery);
+			
+			String [] arrayWords = stringQuery.split(" ");
+			numbWords = arrayWords.length;
+			
+			for(int i = 0; i < numbWords; i++){
+				if(invertedIndex.containsKey(arrayWords[i])){	
+					TreeMap<String, TreeSet<Integer>> map = invertedIndex.get(arrayWords[i]);
+					
+					query.addWordMap(arrayWords[i], map);
+				}				
+			}
+			queryList.add(query);
+		}
+		return queryList;
+	}
+	
+	/**
+	 * 
+	 * @param word
+	 * @param map
+	 */
+	public void addWordMapIndex(String word, TreeMap<String, TreeSet<Integer>> map){
+		if (invertedIndex.get(word) == null){
+			invertedIndex.put(word, map);
+		}
+	}
+	public ArrayList<Query> partialSearch(ArrayList<String> fullQueries){
+		 
+		int numbWords;
+		
+		ArrayList<Query> queryList = new ArrayList<>();
+		
+		for(String stringQuery: fullQueries){
+			
+			Query query = new Query(stringQuery);
+			
+			String [] arrayWords = stringQuery.split(" ");
+			numbWords = arrayWords.length;
+			
+			for(int i = 0; i < numbWords; i++){
+				for(String curr: invertedIndex.keySet()){
+					if(curr.startsWith(arrayWords[i])){	
+						
+						TreeMap<String, TreeSet<Integer>> map = invertedIndex.get(curr);
+						
+						query.addWordMap(curr, map);
+						
+					}	
+				}			
+			}
+			queryList.add(query);
+		}
+		return queryList;
+	}
+
 
 	/**
 	 * Adds quotes to any string, useful in pretty printing JSON
@@ -139,5 +296,38 @@ public class InvertedIndex {
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Determines if a part of a specified word is contained within the inverted index
+	 * 
+	 * @param word
+	 *            - the word to be searched for
+	 * @return boolean true or false
+	 */
+	public boolean containsPartial(String word) {
+		for (String key : invertedIndex.keySet()) {
+			if(key.contains(word)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public String returnsPartial(String word) {
+		for (String key : invertedIndex.keySet()) {
+			if(key.contains(word)){
+				return key;
+			}
+		}
+		return null;
+	}
+
+	public String getStringQuery() {
+		return stringQuery;
+	}
+
+	public void setStringQuery(String stringQuery) {
+		this.stringQuery = stringQuery;
 	}
 }
