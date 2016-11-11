@@ -1,137 +1,115 @@
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-public class Query implements Comparable<Query>{
-	   
-	@Override
-	public int compareTo(Query o) {
-			
-		int frequencyHolder = Long.compare(o.getFrequency(), frequency);
-		if(frequencyHolder == 0){
-			int positionHolder = Long.compare(initalIndex, o.getInitalIndex());
-			if(positionHolder == 0){
-				int locationHolder = o.getLocation().compareTo(location);
-				return locationHolder;
-			}
-			return positionHolder;
-		}
-		return frequencyHolder;
-	
-	}
-		
-		
-//		System.out.println("\nWord: " + word);
-//		System.out.println("Location: " + location);
-//		System.out.println("InitalIndex: " + initalIndex);
-//		System.out.println("Location: " + location + "\n");
-//		System.out.println("OLocation: " + o.getLocation() + "\n");
-	
-	 int frequency;
-	 String location;
-	 int initalIndex;
-	 String word;
-	 InvertedIndex queryIndex;
-	
-	public Query(){
-		word = null;
+public class Query {
+
+	int frequency;
+	String location;
+	int initalIndex;
+	String word;
+	InvertedIndex queryIndex;
+
+	/**
+	 * Initializes a new empty Query object
+	 */
+	public Query() {
 		queryIndex = new InvertedIndex();
 		frequency = 0;
 		location = null;
 		initalIndex = -1;
 	}
-	
-	public void addWordMap(String word, TreeMap<String, TreeSet<Integer>> map){
+
+	/**
+	 * Initializes a new Query object, assigning it a string as the word or
+	 * phrase to be searched for
+	 * 
+	 * @param searchString
+	 *            - the string contained within the Query object that is to be
+	 *            searched for
+	 */
+	public Query(String searchString) {
+		queryIndex = new InvertedIndex();
+		queryIndex.setStringQuery(searchString);
+		frequency = 0;
+		location = null;
+		initalIndex = -1;
+	}
+
+	/**
+	 * Sets a query's count, location, and initial index variables
+	 * 
+	 * @param count
+	 *            - the number of times the query occurred within the specified
+	 *            file
+	 * @param located
+	 *            - the name of the file in which the query was found
+	 * @param firstOccurence
+	 *            - the index representing the first place the query was found
+	 *            within the file
+	 */
+	public void setQuery(int count, String located, int firstOccurence) {
+		frequency = count;
+		location = located;
+		initalIndex = firstOccurence;
+	}
+
+	/**
+	 * Wrapper method that adds the TreeMap associated with each word in the
+	 * inverted index to the query's inverted index
+	 * 
+	 * @param word
+	 *            - the word found in the inverted index
+	 * @param map
+	 *            - a map of the filenames and positions associated with the
+	 *            word in the inverted index
+	 * 
+	 */
+	public void addWordMap(String word, TreeMap<String, TreeSet<Integer>> map) {
 		queryIndex.addWordMapIndex(word, map);
 	}
-	
-	
-	public void add(String wordUpper, String path, int position) {
-		queryIndex.add(wordUpper, path, position);
-	}
-	
-	public void queryPrint(BufferedWriter bufferedWriter) throws IOException{
-		if(bufferedWriter != null){
+
+	/**
+	 * Wrapper method for printQueryIndex, allows queryPrint to be called upon
+	 * each individual Query from main.
+	 * 
+	 * @param bufferedWriter
+	 *            - the bufferedWriter instantiated in main used for print
+	 *            queries to the out file
+	 * @throws IOException
+	 *             - Throws exception if the bufferedWriter is null
+	 */
+	public void queryPrint(BufferedWriter bufferedWriter) throws IOException {
+		if (bufferedWriter != null) {
 			queryIndex.printQueryIndex(bufferedWriter);
 		}
 	}
-	
-	public Query(String searchFor){
-		queryIndex = new InvertedIndex();
-		queryIndex.setStringQuery(searchFor);
-		word = searchFor;
-		frequency = 0;
-		location = null;
-		initalIndex = -1;
-	}
-	
-	public Query(int count, String located, int firstOccurence){
-		frequency = count;
-		location = located; 
-		initalIndex = firstOccurence;
-	}
-	
-	public Query(Query qz){
-		initalIndex = getInitalIndex();
-		frequency = getFrequency();
-		location = getLocation();
-	}
-	
-	public String toString(){
-		StringBuffer sb = new StringBuffer();
-		
-		sb.append(frequency);
-		sb.append(location);
-		sb.append(initalIndex);
-		
-		return new String(sb);
-		
-	}
-	
-	public int getFrequency(){
+
+	/**
+	 * Getter method which returns the Query's frequency
+	 * 
+	 * @return frequency
+	 */
+	public int getFrequency() {
 		return frequency;
 	}
-	
-	public int getInitalIndex(){
+
+	/**
+	 * Getter method which returns the Query's inital index
+	 * 
+	 * @return initalIndex
+	 */
+	public int getInitalIndex() {
 		return initalIndex;
 	}
-	
-	public String getLocation(){
+
+	/**
+	 * Getter method which returns the Query's location's file name
+	 * 
+	 * @return location
+	 */
+	public String getLocation() {
 		return location;
 	}
-	
-	public String getWord(){
-		return word;
-	}
-	
-//	public TreeMap<String, TreeSet<Integer>> getMap(String word){
-//		
-//		
-//	}
-	
-	
-	public void setQuery(int count, String located, int firstOccurence){
-		frequency = count;
-		location = located; 
-		initalIndex = firstOccurence;
-	}
-	
-	
-	
-	public Query combineQuery(Query A, Query B){
-		Query C = new Query();
-		
-		C.setQuery(A.frequency + B.frequency, A.location, Math.min(A.initalIndex,B.initalIndex));
-		return C;
-	}
-
-	
-//	public void babyPrint(){
-//		System.out.println("Word: " + Query.word);
-//		System.out.println("Path: " + Query.location);
-//		System.out.println("First Occurence: " + Query.initalIndex);
-//		System.out.println("Count: " + Query.frequency);
-//	}
 }
