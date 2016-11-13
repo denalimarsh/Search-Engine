@@ -55,6 +55,9 @@ public class InvertedIndex {
 	 * @param bufferedWriter
 	 *            - the result path to print to.
 	 */
+	
+	//TODO This could be in query helper class as well
+	//TODO: You can create and update during search, then store results in Query Helper class, then write separately
 	public void printQueryIndex(BufferedWriter bufferedWriter) {
 		try {
 			TreeSet<PrintResult> resultSet = new TreeSet<>();
@@ -201,7 +204,7 @@ public class InvertedIndex {
 	 * @return queryList - list of queries, stored as queries.
 	 */
 	public ArrayList<Query> exactSearch(ArrayList<String> fullQueries) {
-
+		
 		ArrayList<Query> queryList = new ArrayList<>();
 		for (String stringQuery : fullQueries) {
 
@@ -213,6 +216,8 @@ public class InvertedIndex {
 
 			// for each word, see if it is in the main inverted index
 			// if it is, add that word's map to query's unique inverted index
+			//TODO: If index contains query, create new query object, then add query object to list, return list at the end
+			//TODO: IF multiword, check if query is already there, if not create new query, otherwise update
 			for (int i = 0; i < arrayWords.length; i++) {
 				if (invertedIndex.containsKey(arrayWords[i])) {
 					TreeMap<String, TreeSet<Integer>> map = invertedIndex.get(arrayWords[i]);

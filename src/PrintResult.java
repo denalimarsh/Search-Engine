@@ -1,3 +1,8 @@
+//TODO This should be your query class
+//TODO: One class will have the file, count, positoin, and comparable
+		//Might want an update method
+
+//TODO: The other class will read in the queries, and perform the searching
 public class PrintResult implements Comparable<PrintResult> {
 
 	/**

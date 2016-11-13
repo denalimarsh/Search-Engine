@@ -78,6 +78,8 @@ public class InvertedIndexBuilder {
 		}
 	}
 
+	
+	//TODO: Move this to query helper class
 	/**
 	 * 
 	 * Reads a text file, cleans the words, adds them to a list
@@ -105,7 +107,10 @@ public class InvertedIndexBuilder {
 					String lowerCase = trimmed.toLowerCase();
 
 					if (lowerCase.compareTo("") != 0) {
-
+						
+						
+						//TODO In this method, you will clean each line and pass the query into the InvertedIndex.exactSearch()
+								//or InvertedIndex.partialSearch();
 						// sort and add multiple word query
 						if (lowerCase.matches(".*\\s++.*")) {
 							String multiWordQuery = new String();

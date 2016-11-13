@@ -3,6 +3,12 @@ import java.io.IOException;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+//TODO Each query doesn't need its own inverted index
+//TODO this class should be like a query helper, query builder class
+
+//TODO You should have one class to read in the query file
+//TODO Perform queries on inverted index
+	//The query helper class will have an inverted index, and a Map which maps the string query to the print result objects
 public class Query {
 
 	int frequency;
