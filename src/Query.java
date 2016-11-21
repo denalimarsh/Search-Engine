@@ -1,48 +1,37 @@
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
-//TODO Each query doesn't need its own inverted index
-//TODO this class should be like a query helper, query builder class
-
-//TODO You should have one class to read in the query file
-//TODO Perform queries on inverted index
-	//The query helper class will have an inverted index, and a Map which maps the string query to the print result objects
-public class Query {
-
-	int frequency;
-	String location;
-	int initalIndex;
-	String word;
-	InvertedIndex queryIndex;
+public class Query implements Comparable<Query> {
 
 	/**
-	 * Initializes a new empty Query object
+	 * Implemented Comparable, sorts the print results according to their
+	 * frequency, then their initial index, then their file name
 	 */
-	public Query() {
-		queryIndex = new InvertedIndex();
-		frequency = 0;
-		location = null;
-		initalIndex = -1;
+	@Override
+	public int compareTo(Query o) {
+
+		int frequencyHolder = Integer.compare(o.getCount(), count);
+		if (frequencyHolder == 0) {
+			int positionHolder = Integer.compare(position, o.getPosition());
+			if (positionHolder == 0) {
+				int locationHolder = file.compareTo(o.getFile());
+				return locationHolder;
+			}
+			return positionHolder;
+		}
+		return frequencyHolder;
 	}
+
+	String file;
+	int count;
+	int position;
 
 	/**
-	 * Initializes a new Query object, assigning it a string as the word or
-	 * phrase to be searched for
-	 * 
-	 * @param searchString
-	 *            - the string contained within the Query object that is to be
-	 *            searched for
+	 * Initialize new print result
 	 */
-	public Query(String searchString) {
-		queryIndex = new InvertedIndex();
-		queryIndex.setStringQuery(searchString);
-		frequency = 0;
-		location = null;
-		initalIndex = -1;
+	public Query(){
+		file = null;
+		count = 0;
+		position = 0;
 	}
-
+	
 	/**
 	 * Sets a query's count, location, and initial index variables
 	 * 
@@ -56,66 +45,107 @@ public class Query {
 	 *            within the file
 	 */
 	public void setQuery(int count, String located, int firstOccurence) {
-		frequency = count;
-		location = located;
-		initalIndex = firstOccurence;
+		this.count = count;
+		this.file = located;
+		this.position = firstOccurence;
 	}
-
+	
 	/**
-	 * Wrapper method that adds the TreeMap associated with each word in the
-	 * inverted index to the query's inverted index
+	 * Updates a Query object's position and count from the information
+	 * contained within another Query object, resulting in one combined
+	 * Query object
 	 * 
-	 * @param word
-	 *            - the word found in the inverted index
-	 * @param map
-	 *            - a map of the filenames and positions associated with the
-	 *            word in the inverted index
-	 * 
+	 * @param query
+	 * 			- the new Query whose values will be used to update the
+	 * 			  existing Query object
 	 */
-	public void addWordMap(String word, TreeMap<String, TreeSet<Integer>> map) {
-		queryIndex.addWordMapIndex(word, map);
-	}
-
-	/**
-	 * Wrapper method for printQueryIndex, allows queryPrint to be called upon
-	 * each individual Query from main.
-	 * 
-	 * @param bufferedWriter
-	 *            - the bufferedWriter instantiated in main used for print
-	 *            queries to the out file
-	 * @throws IOException
-	 *             - Throws exception if the bufferedWriter is null
-	 */
-	public void queryPrint(BufferedWriter bufferedWriter) throws IOException {
-		if (bufferedWriter != null) {
-			queryIndex.printQueryIndex(bufferedWriter);
+	public void updateQuery(Query query){
+		int frequency = query.getCount();
+		int initalIndex = query.getPosition();
+		
+		this.count = count + frequency;
+		if(initalIndex < this.position){
+			this.position = initalIndex;
 		}
 	}
-
+	
 	/**
-	 * Getter method which returns the Query's frequency
+	 * Getter method for file name
 	 * 
-	 * @return frequency
+	 * @return the location of the print result
 	 */
-	public int getFrequency() {
-		return frequency;
+	public String getFile() {
+		return file;
 	}
 
 	/**
-	 * Getter method which returns the Query's inital index
+	 * Getter method for frequency
 	 * 
-	 * @return initalIndex
+	 * @return the print result's frequency
 	 */
-	public int getInitalIndex() {
-		return initalIndex;
+	public int getCount() {
+		return count;
 	}
 
 	/**
-	 * Getter method which returns the Query's location's file name
+	 * Getter method for initial index
 	 * 
-	 * @return location
+	 * @return the print result's initial index
 	 */
-	public String getLocation() {
-		return location;
+
+	public int getPosition() {
+		return position;
+	}
+
+	/**
+	 * Setter method for initial index
+	 * 
+	 * @param index
+	 *            - the initial index to be set as the print result's position
+	 */
+	public void setPosition(int index) {
+		position = index;
+	}
+
+	/**
+	 * Setter method for word frequency
+	 * 
+	 * @param counter
+	 *            - the frequency of word occurrence to be set as the print
+	 *            result's count
+	 */
+	public void setCount(int counter) {
+		count = counter;
+	}
+
+	/**
+	 * Setter method for file name of location
+	 * 
+	 * @param fileName
+	 *            - the file name to be set as the print result's file location
+	 */
+	public void setFile(String fileName) {
+		file = fileName;
+	}
+
+	/**
+	 * Turns the print result into a string
+	 * 
+	 * @return a string representing the data contained within the print result
+	 */
+	public String toString() {
+		return "\n\t\t{\n\t\t\t" + quote("where") + ": " + quote(file) + ",\n\t\t\t" + quote("count") + ": " + count
+				+ ",\n\t\t\t" + quote("index") + ": " + position + "\n\t\t}";
+	}
+
+	/**
+	 * Adds quotes to any string, useful in pretty printing JSON
+	 * 
+	 * @param text
+	 *            - the string to be quoted
+	 * @return the string with quotations on it
+	 */
+	public String quote(String text) {
+		return String.format("\"%s\"", text);
 	}
 }
