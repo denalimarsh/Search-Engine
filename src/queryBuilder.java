@@ -25,7 +25,8 @@ public class queryBuilder {
 	 * 
 	 * @param path
 	 *            - the path to be read and parsed into queries
-	 * @return uniqueList - a sorted, unique list of Strings
+	 * @return uniqueList 
+	 * 			  - a sorted, unique list of Strings
 	 */
 	public void parseQuery(Path path, int searchFlag, InvertedIndex index) {
 
@@ -108,7 +109,7 @@ public class queryBuilder {
 	 * 
 	 * @param path
 	 * 			- the file location to print the results to
-	 * @param buildQuery2
+	 * @param finishedBuildQuery
 	 * 			- the data structure containing the results to be printed
 	 */
 	private static void printQuery(Path path, TreeMap<String, List<Query>> finishedBuildQuery) {
@@ -143,7 +144,7 @@ public class queryBuilder {
 			wordCount = 0;
 			writer.write("\n");
 		} catch (IOException e) {
-			System.err.println("Caught exception: " + path.toString());
+			System.err.println("Could not print to: " + path.toString());
 		}
 		
 	}

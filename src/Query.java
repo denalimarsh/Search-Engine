@@ -1,7 +1,7 @@
 public class Query implements Comparable<Query> {
 
 	/**
-	 * Implemented Comparable, sorts the print results according to their
+	 * Implemented Comparable, sorts the Queries according to their
 	 * frequency, then their initial index, then their file name
 	 */
 	@Override
@@ -24,7 +24,7 @@ public class Query implements Comparable<Query> {
 	int position;
 
 	/**
-	 * Initialize new print result
+	 * Initialize new Query
 	 */
 	public Query(){
 		file = null;
@@ -72,7 +72,7 @@ public class Query implements Comparable<Query> {
 	/**
 	 * Getter method for file name
 	 * 
-	 * @return the location of the print result
+	 * @return the location of the Query
 	 */
 	public String getFile() {
 		return file;
@@ -81,7 +81,7 @@ public class Query implements Comparable<Query> {
 	/**
 	 * Getter method for frequency
 	 * 
-	 * @return the print result's frequency
+	 * @return the Query's frequency
 	 */
 	public int getCount() {
 		return count;
@@ -90,7 +90,7 @@ public class Query implements Comparable<Query> {
 	/**
 	 * Getter method for initial index
 	 * 
-	 * @return the print result's initial index
+	 * @return the Query's initial index
 	 */
 
 	public int getPosition() {
@@ -101,7 +101,7 @@ public class Query implements Comparable<Query> {
 	 * Setter method for initial index
 	 * 
 	 * @param index
-	 *            - the initial index to be set as the print result's position
+	 *            - the initial index to be set as the Query's position
 	 */
 	public void setPosition(int index) {
 		position = index;
@@ -111,8 +111,7 @@ public class Query implements Comparable<Query> {
 	 * Setter method for word frequency
 	 * 
 	 * @param counter
-	 *            - the frequency of word occurrence to be set as the print
-	 *            result's count
+	 *            - the frequency of word occurrence to be set as the Query's count
 	 */
 	public void setCount(int counter) {
 		count = counter;
@@ -122,16 +121,16 @@ public class Query implements Comparable<Query> {
 	 * Setter method for file name of location
 	 * 
 	 * @param fileName
-	 *            - the file name to be set as the print result's file location
+	 *            - the file name to be set as the Query's file location
 	 */
 	public void setFile(String fileName) {
 		file = fileName;
 	}
 
 	/**
-	 * Turns the print result into a string
+	 * Turns the Query into a string
 	 * 
-	 * @return a string representing the data contained within the print result
+	 * @return a string representing the data contained within the Query
 	 */
 	public String toString() {
 		return "\n\t\t{\n\t\t\t" + quote("where") + ": " + quote(file) + ",\n\t\t\t" + quote("count") + ": " + count
