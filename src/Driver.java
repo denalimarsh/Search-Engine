@@ -16,8 +16,8 @@ public class Driver {
 	public static void main(String[] args) {
 
 		ArgumentParser parser = new ArgumentParser(args);
-
 		InvertedIndex index = new InvertedIndex();
+		QueryHelper queryHelper = new QueryHelper();
 
 		if (parser.hasFlag("-dir")) {
 			if (parser.hasValue("-dir")) {
@@ -30,39 +30,21 @@ public class Driver {
 			Path output = Paths.get(parser.getValue("-index", "index.json"));
 			index.print(output);
 		}
-		
-		// TODO Declare this outside so the -results can access it.
-//		queryBuilder queryHelper;
-		
+
 		if (parser.hasFlag("-query")) {
 			if (parser.hasValue("-query")) {
 				Path queryPath = Paths.get(parser.getValue("-query"));
-				
-				queryBuilder queryHelper = new queryBuilder();
 				queryHelper.parseQuery(queryPath, 1, index);
-
-				if (parser.hasFlag("-results")) {
-					Path results = Paths.get(parser.getValue("-results", "results.json"));
-					queryHelper.printHelper(results);
-				}
 			}
 		}
 
 		if (parser.hasFlag("-exact")) {
 			if (parser.hasValue("-exact")) {
 				Path exactPath = Paths.get(parser.getValue("-exact"));
-				
-				queryBuilder queryHelper = new queryBuilder();
 				queryHelper.parseQuery(exactPath, 0, index);
-
-				if (parser.hasFlag("-results")) {
-					Path results = Paths.get(parser.getValue("-results", "results.json"));
-					queryHelper.printHelper(results);
-				}
 			}
 		}
-		
-		// TODO This should be here so you do not have duplicated codes.
+
 		if (parser.hasFlag("-results")) {
 			Path results = Paths.get(parser.getValue("-results", "results.json"));
 			queryHelper.printHelper(results);

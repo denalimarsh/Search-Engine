@@ -1,18 +1,33 @@
-//TODO This should be your query class
-//TODO: One class will have the file, count, positoin, and comparable
-		//Might want an update method
-
-//TODO: The other class will read in the queries, and perform the searching
 public class PrintResult implements Comparable<PrintResult> {
 
+	private final String file;
+	private int frequency;
+	private int position;
+
 	/**
-	 * Implemented Comparable, sorts the print results according to their
-	 * frequency, then their initial index, then their file name
+	 * Constructor for new PrintResult
+	 * 
+	 * @param file
+	 *            - the file location, stored as a String
+	 * @param frequency
+	 *            - the number of times the word occurs within a specified file
+	 * @param position
+	 *            - the initial index, or first place the word is found at
+	 */
+	public PrintResult(String file, int frequency, int position) {
+		this.frequency = frequency;
+		this.file = file;
+		this.position = position;
+	}
+
+	/**
+	 * Implemented Comparable, sorts the Queries according to their frequency,
+	 * then their initial index, then their file name
 	 */
 	@Override
 	public int compareTo(PrintResult o) {
 
-		int frequencyHolder = Integer.compare(o.getCount(), count);
+		int frequencyHolder = Integer.compare(o.getFrequency(), frequency);
 		if (frequencyHolder == 0) {
 			int positionHolder = Integer.compare(position, o.getPosition());
 			if (positionHolder == 0) {
@@ -24,23 +39,26 @@ public class PrintResult implements Comparable<PrintResult> {
 		return frequencyHolder;
 	}
 
-	String file;
-	int count;
-	int position;
-
 	/**
-	 * Initialize new print result
+	 * Updates a PrintResult object's position and frequency from the frequency
+	 * and position of another PrintResult object, resulting in one combined
+	 * PrintResult object
+	 * 
+	 * @param PrintResult
+	 *            - the new PrintResult whose values will be used to update the
+	 *            existing PrintResult object
 	 */
-	public PrintResult() {
-		file = null;
-		count = 0;
-		position = 0;
+	public void updatePrintResult(int frequency, int initalIndex) {
+		this.frequency += frequency;
+		if (initalIndex < this.position) {
+			this.position = initalIndex;
+		}
 	}
 
 	/**
 	 * Getter method for file name
 	 * 
-	 * @return the location of the print result
+	 * @return the location of the PrintResult
 	 */
 	public String getFile() {
 		return file;
@@ -49,61 +67,20 @@ public class PrintResult implements Comparable<PrintResult> {
 	/**
 	 * Getter method for frequency
 	 * 
-	 * @return the print result's frequency
+	 * @return the PrintResult's frequency
 	 */
-	public int getCount() {
-		return count;
+	public int getFrequency() {
+		return frequency;
 	}
 
 	/**
 	 * Getter method for initial index
 	 * 
-	 * @return the print result's initial index
+	 * @return the PrintResult's initial index
 	 */
 
 	public int getPosition() {
 		return position;
-	}
-
-	/**
-	 * Setter method for initial index
-	 * 
-	 * @param index
-	 *            - the initial index to be set as the print result's position
-	 */
-	public void setPosition(int index) {
-		position = index;
-	}
-
-	/**
-	 * Setter method for word frequency
-	 * 
-	 * @param counter
-	 *            - the frequency of word occurrence to be set as the print
-	 *            result's count
-	 */
-	public void setCount(int counter) {
-		count = counter;
-	}
-
-	/**
-	 * Setter method for file name of location
-	 * 
-	 * @param fileName
-	 *            - the file name to be set as the print result's file location
-	 */
-	public void setFile(String fileName) {
-		file = fileName;
-	}
-
-	/**
-	 * Turns the print result into a string
-	 * 
-	 * @return a string representing the data contained within the print result
-	 */
-	public String toString() {
-		return "\n\t\t{\n\t\t\t" + quote("where") + ": " + quote(file) + ",\n\t\t\t" + quote("count") + ": " + count
-				+ ",\n\t\t\t" + quote("index") + ": " + position + "\n\t\t}";
 	}
 
 	/**

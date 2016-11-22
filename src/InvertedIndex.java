@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -24,7 +23,6 @@ public class InvertedIndex {
 	}
 
 	/**
-	 * 
 	 * Adds a node containing the word, file the word is located in, and the
 	 * position of the word within the file to an inverted index
 	 * 
@@ -50,7 +48,7 @@ public class InvertedIndex {
 			}
 		}
 	}
-	
+
 	/**
 	 * Prints the inverted index by iterating through the TreeMap of words, the
 	 * TreeMap of files, and the TreeSet of integer positions, writing them to
@@ -111,135 +109,84 @@ public class InvertedIndex {
 			System.out.println("Unable to print the inverted index to location " + quote(path.toString()));
 		}
 	}
-	
+
 	/**
 	 * Performs an exact search of the inverted index for the specified string
 	 * 
 	 * @param stringQuery
-	 * 			- the string to be searched for
-	 * @return list
-	 * 			- list of Query objects found as the result of the search
+	 *            - the string to be searched for
+	 * @return list - list of Query objects found as the result of the search
 	 */
-	// TODO Return type --> generic.
-	public List<Query> exactSearch(String stringQuery) {
-		
-		// TODO Fix indentation.
-			// TODO Declare --> generic. Initialize --> specific.
-			Map<String, Query> resultMap = new HashMap<>();
-			List<Query> list = new ArrayList<>();
-			
-			String[] arrayWords = stringQuery.split(" ");
+	public List<PrintResult> exactSearch(String stringQuery) {
 
-				for(int i = 0; i < arrayWords.length; i++){
-					// TODO Use "invertedIndex.containsKey(word)".
-					if(containsWord(arrayWords[i])) {
-						TreeMap<String, TreeSet<Integer>> map = invertedIndex.get(arrayWords[i]);			
-						for (Map.Entry<String, TreeSet<Integer>> entry : map.entrySet())
-						{
-//							Query query = new Query();
-							TreeSet<Integer> set = entry.getValue();
-							
-							int count = set.size();
-							int initalIndex = Collections.min(set);
-							
-							
-							
-//							query.setFile(entry.getKey());
-//							query.setCount(count);
-//							query.setPosition(initalIndex);
-							
-							if(!resultMap.containsKey(entry.getKey())){
-								// TODO Use constructor.
-								Query query = new Query(entry.getKey(), count, initalIndex);
-								resultMap.put(entry.getKey(), query);
-								list.add(query);
-							}else{
-								Query oldQuery = resultMap.get(entry.getKey());
-								oldQuery.updateQuery(count, initalIndex);
-							}
-						}
+		Map<String, PrintResult> resultMap = new HashMap<>();
+		List<PrintResult> list = new ArrayList<>();
+
+		String[] arrayWords = stringQuery.split(" ");
+
+		for (int i = 0; i < arrayWords.length; i++) {
+			if (invertedIndex.containsKey(arrayWords[i])) {
+				TreeMap<String, TreeSet<Integer>> map = invertedIndex.get(arrayWords[i]);
+				for (Map.Entry<String, TreeSet<Integer>> entry : map.entrySet()) {
+					TreeSet<Integer> set = entry.getValue();
+					int count = set.size();
+					int initalIndex = Collections.min(set);
+
+					if (!resultMap.containsKey(entry.getKey())) {
+						PrintResult result = new PrintResult(entry.getKey(), count, initalIndex);
+						resultMap.put(entry.getKey(), result);
+						list.add(result);
+					} else {
+						PrintResult oldQuery = resultMap.get(entry.getKey());
+						oldQuery.updatePrintResult(count, initalIndex);
 					}
-					Collections.sort(list);
 				}
-		return list;
+			}
+			Collections.sort(list);
 		}
-	
+		return list;
+	}
+
 	/**
 	 * Performs a partial search of the inverted index for the specified string
 	 * 
 	 * @param stringQuery
-	 * 			- the string to be searched for
-	 * @return list
-	 * 			- list of Query objects found as the result of the search
+	 *            - the string to be searched for
+	 * @return list - list of Query objects found as the result of the search
 	 */
-	public ArrayList<Query> partialSearch(String stringQuery) {
+	public List<PrintResult> partialSearch(String stringQuery) {
 
-		HashMap<String, Query> resultMap = new HashMap<>();
-		ArrayList<Query> list = new ArrayList<>();
-		
+		Map<String, PrintResult> resultMap = new HashMap<>();
+		List<PrintResult> list = new ArrayList<>();
+
 		String[] arrayWords = stringQuery.split(" ");
 
-			for(int i = 0; i < arrayWords.length; i++){
-				String word = arrayWords[i];
-				for (String key: invertedIndex.tailMap(word).keySet()) {
-					if (key.startsWith(word)) {
-						// TODO match --> key.
-						TreeMap<String, TreeSet<Integer>> map = invertedIndex.get(match);
-						for (Map.Entry<String, TreeSet<Integer>> entry : map.entrySet())
-						{
-							// TODO Update it to the same way as exact search.
-							Query query = new Query();
-							TreeSet<Integer> set = entry.getValue();
-							
-							int count = set.size();
-							int initalIndex = Collections.min(set);
-							query.setFile(entry.getKey());
-							query.setCount(count);
-							query.setPosition(initalIndex);
-							
-							if(!resultMap.containsKey(entry.getKey())){
-								resultMap.put(entry.getKey(), query);
-								list.add(query);
-							}else{
-								Query oldQuery = resultMap.get(entry.getKey());
-								oldQuery.updateQuery(query);
-							}
+		for (int i = 0; i < arrayWords.length; i++) {
+			String word = arrayWords[i];
+			for (String key : invertedIndex.tailMap(word).keySet()) {
+				if (key.startsWith(word)) {
+					TreeMap<String, TreeSet<Integer>> map = invertedIndex.get(key);
+					for (Map.Entry<String, TreeSet<Integer>> entry : map.entrySet()) {
+						TreeSet<Integer> set = entry.getValue();
+						int count = set.size();
+						int initalIndex = Collections.min(set);
+
+						if (!resultMap.containsKey(entry.getKey())) {
+							PrintResult result = new PrintResult(entry.getKey(), count, initalIndex);
+							resultMap.put(entry.getKey(), result);
+							list.add(result);
+						} else {
+							PrintResult oldQuery = resultMap.get(entry.getKey());
+							oldQuery.updatePrintResult(count, initalIndex);
 						}
 					}
-					else {
-						break;
-					}
+				} else {
+					break;
 				}
-				
-				
-				if(containsPartial(arrayWords[i])) {
-					List<String> partialMatches = returnsPartial(arrayWords[i]);
-					for(String match: partialMatches){
-						TreeMap<String, TreeSet<Integer>> map = invertedIndex.get(match);
-						for (Map.Entry<String, TreeSet<Integer>> entry : map.entrySet())
-						{
-							Query query = new Query();
-							TreeSet<Integer> set = entry.getValue();
-							
-							int count = set.size();
-							int initalIndex = Collections.min(set);
-							query.setFile(entry.getKey());
-							query.setCount(count);
-							query.setPosition(initalIndex);
-							
-							if(!resultMap.containsKey(entry.getKey())){
-								resultMap.put(entry.getKey(), query);
-								list.add(query);
-							}else{
-								Query oldQuery = resultMap.get(entry.getKey());
-								oldQuery.updateQuery(query);
-							}
-						}
-					}					
-				}
-				Collections.sort(list);
 			}
-	return list;
+			Collections.sort(list);
+		}
+		return list;
 	}
 
 	/**
@@ -259,78 +206,5 @@ public class InvertedIndex {
 	@Override
 	public String toString() {
 		return invertedIndex.toString();
-	}
-
-	/**
-	 * Determines if a specified word is contained within the inverted index
-	 * 
-	 * @param word
-	 *            - the word to be searched for
-	 * @return boolean true or false
-	 */
-	// TODO Remove this.
-	public boolean containsWord(String word) {
-		if (invertedIndex.containsKey(word)) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Determines if a part of a specified word is contained within the inverted
-	 * index
-	 * 
-	 * @param word
-	 *            - the word to be searched for
-	 * @return boolean true or false
-	 */
-	public boolean containsPartial(String word) {
-		for (String key : invertedIndex.keySet()) {
-			if (key.startsWith(word)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Returns all the strings found as a partial match for a word
-	 * 
-	 * @param word
-	 *          - word to be searched for
-	 * @return list 
-	 * 			- list of strings found to have a partial match
-	 */
-	public ArrayList<String> returnsPartial(String word) {
-		ArrayList<String> list = new ArrayList<>();
-		invertedIndex.tailMap(word);
-		for (String key : invertedIndex.keySet()) {
-			if (key.startsWith(word)) {
-				list.add(key);
-			}
-		}
-		return list;
-	}
-	
-	/**
-	 * Gets the keySet of the inverted index
-	 * 
-	 * @return
-	 * 		- the keySet of the inverted index
-	 */
-	public Object keySet() {
-		return invertedIndex.keySet();
-	}
-	
-	/**
-	 * Gets the specified key of the inverted index
-	 * 
-	 * @param key
-	 * 			- the key whose map we want to return
-	 * @return
-	 * 			- the map associated with the specified key
-	 */
-	public TreeMap<String, TreeSet<Integer>> get(String key) {
-		return invertedIndex.get(key);
 	}
 }
