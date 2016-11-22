@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -119,33 +120,42 @@ public class InvertedIndex {
 	 * @return list
 	 * 			- list of Query objects found as the result of the search
 	 */
-	public ArrayList<Query> exactSearch(String stringQuery) {
-
-			HashMap<String, Query> resultMap = new HashMap<>();
-			ArrayList<Query> list = new ArrayList<>();
+	// TODO Return type --> generic.
+	public List<Query> exactSearch(String stringQuery) {
+		
+		// TODO Fix indentation.
+			// TODO Declare --> generic. Initialize --> specific.
+			Map<String, Query> resultMap = new HashMap<>();
+			List<Query> list = new ArrayList<>();
 			
 			String[] arrayWords = stringQuery.split(" ");
 
 				for(int i = 0; i < arrayWords.length; i++){
+					// TODO Use "invertedIndex.containsKey(word)".
 					if(containsWord(arrayWords[i])) {
 						TreeMap<String, TreeSet<Integer>> map = invertedIndex.get(arrayWords[i]);			
 						for (Map.Entry<String, TreeSet<Integer>> entry : map.entrySet())
 						{
-							Query query = new Query();
+//							Query query = new Query();
 							TreeSet<Integer> set = entry.getValue();
 							
 							int count = set.size();
 							int initalIndex = Collections.min(set);
-							query.setFile(entry.getKey());
-							query.setCount(count);
-							query.setPosition(initalIndex);
+							
+							
+							
+//							query.setFile(entry.getKey());
+//							query.setCount(count);
+//							query.setPosition(initalIndex);
 							
 							if(!resultMap.containsKey(entry.getKey())){
+								// TODO Use constructor.
+								Query query = new Query(entry.getKey(), count, initalIndex);
 								resultMap.put(entry.getKey(), query);
 								list.add(query);
 							}else{
 								Query oldQuery = resultMap.get(entry.getKey());
-								oldQuery.updateQuery(query);
+								oldQuery.updateQuery(count, initalIndex);
 							}
 						}
 					}
@@ -170,6 +180,38 @@ public class InvertedIndex {
 		String[] arrayWords = stringQuery.split(" ");
 
 			for(int i = 0; i < arrayWords.length; i++){
+				String word = arrayWords[i];
+				for (String key: invertedIndex.tailMap(word).keySet()) {
+					if (key.startsWith(word)) {
+						// TODO match --> key.
+						TreeMap<String, TreeSet<Integer>> map = invertedIndex.get(match);
+						for (Map.Entry<String, TreeSet<Integer>> entry : map.entrySet())
+						{
+							// TODO Update it to the same way as exact search.
+							Query query = new Query();
+							TreeSet<Integer> set = entry.getValue();
+							
+							int count = set.size();
+							int initalIndex = Collections.min(set);
+							query.setFile(entry.getKey());
+							query.setCount(count);
+							query.setPosition(initalIndex);
+							
+							if(!resultMap.containsKey(entry.getKey())){
+								resultMap.put(entry.getKey(), query);
+								list.add(query);
+							}else{
+								Query oldQuery = resultMap.get(entry.getKey());
+								oldQuery.updateQuery(query);
+							}
+						}
+					}
+					else {
+						break;
+					}
+				}
+				
+				
 				if(containsPartial(arrayWords[i])) {
 					List<String> partialMatches = returnsPartial(arrayWords[i]);
 					for(String match: partialMatches){
@@ -226,6 +268,7 @@ public class InvertedIndex {
 	 *            - the word to be searched for
 	 * @return boolean true or false
 	 */
+	// TODO Remove this.
 	public boolean containsWord(String word) {
 		if (invertedIndex.containsKey(word)) {
 			return true;
@@ -260,6 +303,7 @@ public class InvertedIndex {
 	 */
 	public ArrayList<String> returnsPartial(String word) {
 		ArrayList<String> list = new ArrayList<>();
+		invertedIndex.tailMap(word);
 		for (String key : invertedIndex.keySet()) {
 			if (key.startsWith(word)) {
 				list.add(key);

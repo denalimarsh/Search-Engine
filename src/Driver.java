@@ -30,7 +30,10 @@ public class Driver {
 			Path output = Paths.get(parser.getValue("-index", "index.json"));
 			index.print(output);
 		}
-
+		
+		// TODO Declare this outside so the -results can access it.
+//		queryBuilder queryHelper;
+		
 		if (parser.hasFlag("-query")) {
 			if (parser.hasValue("-query")) {
 				Path queryPath = Paths.get(parser.getValue("-query"));
@@ -57,6 +60,12 @@ public class Driver {
 					queryHelper.printHelper(results);
 				}
 			}
+		}
+		
+		// TODO This should be here so you do not have duplicated codes.
+		if (parser.hasFlag("-results")) {
+			Path results = Paths.get(parser.getValue("-results", "results.json"));
+			queryHelper.printHelper(results);
 		}
 	}
 }

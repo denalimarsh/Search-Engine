@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
 
+// TODO Class name should start with capital letter.
 public class queryBuilder {
 
 	private final TreeMap<String, List<Query>> buildQuery;
@@ -63,27 +64,17 @@ public class queryBuilder {
 								}
 							}
 							
-							//instantiate list to hold results of search
-							ArrayList<Query> list = new ArrayList<>();
-							if(searchFlag == 0){
-								list = index.exactSearch(multiWordQuery);
-							}else{
-								list = index.partialSearch(multiWordQuery);
-							}
-							getbuildQuery().put(multiWordQuery, list);
-							
-						//if single word query	
-						} else {
-							
-							//instantiate list to hold results of search
-							ArrayList<Query> list = new ArrayList<>();
-							if(searchFlag == 0){
-								list = index.exactSearch(lowerCase);
-							}else{
-								list = index.partialSearch(lowerCase);
-							}
-							getbuildQuery().put(lowerCase, list);
+							lowerCase = multiWordQuery;
 						}
+						
+						//instantiate list to hold results of search
+						ArrayList<Query> list = new ArrayList<>();
+						if(searchFlag == 0){
+							list = index.exactSearch(lowerCase);
+						}else{
+							list = index.partialSearch(lowerCase);
+						}
+						getbuildQuery().put(lowerCase, list);
 					}
 				}
 				line = br.readLine();
