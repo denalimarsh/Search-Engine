@@ -18,6 +18,7 @@ public class Driver {
 		ArgumentParser parser = new ArgumentParser(args);
 		InvertedIndex index = new InvertedIndex();
 		QueryHelper queryHelper = new QueryHelper();
+		Crawler spider = new Crawler();
 
 		if (parser.hasFlag("-dir")) {
 			if (parser.hasValue("-dir")) {

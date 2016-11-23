@@ -9,16 +9,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
 
-// TODO Class name should start with capital letter.
 public class QueryHelper {
 
-	private final TreeMap<String, List<PrintResult>> buildQuery;
+	private final TreeMap<String, List<SearchResult>> buildQuery;
 
 	/**
 	 * Initializes a new QueryHelper object
 	 */
 	public QueryHelper() {
-		buildQuery = new TreeMap<String, List<PrintResult>>();
+		buildQuery = new TreeMap<String, List<SearchResult>>();
 	}
 
 	/**
@@ -35,68 +34,25 @@ public class QueryHelper {
 		try (BufferedReader br = Files.newBufferedReader(path, charset)) {
 			String line = br.readLine();
 			while ((line) != null) {
-				// TODO Since you are using readLine so it will definitely have one "\n" at the end.
-				// So using split("\n") is not making sense since it will always return you ["searhLine", "\n"]
-				// Try this template.
 				line = line.trim();
 				line = line.replaceAll("\\p{Punct}+", "");
 				line = line.replaceAll("\\s+", " ");
 				line = line.toLowerCase();
+
 				String[] arrayWord = line.split(" ");
-				// This mean "multi-word query"
-				List<PrintResult> list = new ArrayList<>();
+				Arrays.sort(arrayWord);
+
+				List<SearchResult> list = new ArrayList<>();
+
 				if (searchFlag == 0) {
 					list = index.exactSearch(arrayWord);
 				} else {
 					list = index.partialSearch(arrayWord);
 				}
-				// TODO Change getbuildQuery() to buildQuery. It does have access.
-				getbuildQuery().put(arrayWord, list);
-				line = br.readLine();
-				// ----- //
-				
-				
-				String[] words = line.split("\n");
-				String cleaned = null;
-				for (int i = 0; i < words.length; i++) {
 
-					// clean each word, removing all non-alphanumerics
-					String holder = words[i];
-					cleaned = holder.replaceAll("\\p{Punct}+", "");
-					String trimmed = cleaned.trim();
-					String lowerCase = trimmed.toLowerCase();
+				String text = String.join(" ", arrayWord);
 
-					if (lowerCase.compareTo("") != 0) {
-
-						// if multiple word query, sort the words
-						if (lowerCase.matches(".*\\s++.*")) {
-							String multiWordQuery = new String();
-							lowerCase = lowerCase.replaceAll("\\s+", " ");
-							String[] multiWordArray = lowerCase.split("\\s+");
-							Arrays.sort(multiWordArray);
-
-							// recombine multiple word query
-							for (int p = 0; p < multiWordArray.length; p++) {
-								if (p == (multiWordArray.length - 1)) {
-									multiWordQuery += multiWordArray[p];
-								} else {
-									multiWordQuery += multiWordArray[p] + " ";
-								}
-							}
-
-							lowerCase = multiWordQuery;
-						}
-
-						// instantiate list to hold results of search
-						List<PrintResult> list = new ArrayList<>();
-						if (searchFlag == 0) {
-							list = index.exactSearch(lowerCase);
-						} else {
-							list = index.partialSearch(lowerCase);
-						}
-						getbuildQuery().put(lowerCase, list);
-					}
-				}
+				buildQuery.put(text, list);
 				line = br.readLine();
 			}
 		} catch (IOException ex) {
@@ -112,7 +68,7 @@ public class QueryHelper {
 	 *            - the file location to print the results to
 	 */
 	public void printHelper(Path path) {
-		QueryHelper.printQuery(path, getbuildQuery());
+		QueryHelper.printQuery(path, buildQuery);
 	}
 
 	/**
@@ -123,23 +79,23 @@ public class QueryHelper {
 	 * @param finishedBuildQuery
 	 *            - the data structure containing the results to be printed
 	 */
-	private static void printQuery(Path path, TreeMap<String, List<PrintResult>> finishedBuildQuery) {
+	private static void printQuery(Path path, TreeMap<String, List<SearchResult>> finishedBuildQuery) {
 		try (BufferedWriter writer = Files.newBufferedWriter(path);) {
 			writer.write("{\n");
 			int wordCount = 0;
 
 			if (!finishedBuildQuery.isEmpty()) {
 				for (String key : finishedBuildQuery.keySet()) {
-					int printResultCount = 0;
+					int SearchResultCount = 0;
 					if (wordCount == 0) {
 						writer.write("\t" + quote(key) + ": [");
 						wordCount++;
 					} else {
 						writer.write(",\n\t" + quote(key) + ": [");
 					}
-					for (PrintResult qq : finishedBuildQuery.get(key)) {
+					for (SearchResult qq : finishedBuildQuery.get(key)) {
 						int size = finishedBuildQuery.get(key).size();
-						if (printResultCount == size - 1) {
+						if (SearchResultCount == size - 1) {
 							writer.write("\n\t\t{\n\t\t\t" + quote("where") + ": " + quote(qq.getFile()) + ",\n\t\t\t"
 									+ quote("count") + ": " + qq.getFrequency() + ",\n\t\t\t" + quote("index") + ": "
 									+ qq.getPosition() + "\n\t\t}");
@@ -148,7 +104,7 @@ public class QueryHelper {
 									+ quote("count") + ": " + qq.getFrequency() + ",\n\t\t\t" + quote("index") + ": "
 									+ qq.getPosition() + "\n\t\t},");
 						}
-						printResultCount++;
+						SearchResultCount++;
 					}
 					writer.write("\n\t]");
 				}
@@ -159,7 +115,6 @@ public class QueryHelper {
 		} catch (IOException e) {
 			System.err.println("Could not print to: " + path.toString());
 		}
-
 	}
 
 	/**
@@ -173,13 +128,4 @@ public class QueryHelper {
 		return String.format("\"%s\"", text);
 	}
 
-	/**
-	 * Get method to return the buildQuery
-	 * 
-	 * @return buildQuery
-	 */
-	// TODO No need this method.
-	public TreeMap<String, List<PrintResult>> getbuildQuery() {
-		return buildQuery;
-	}
 }

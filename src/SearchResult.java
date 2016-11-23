@@ -1,13 +1,11 @@
-
-// TODO Rename this to "SearchResult", we are not doing anything about "print".
-public class PrintResult implements Comparable<PrintResult> {
+public class SearchResult implements Comparable<SearchResult> {
 
 	private final String file;
 	private int frequency;
 	private int position;
 
 	/**
-	 * Constructor for new PrintResult
+	 * Constructor for new SearchResult
 	 * 
 	 * @param file
 	 *            - the file location, stored as a String
@@ -16,7 +14,7 @@ public class PrintResult implements Comparable<PrintResult> {
 	 * @param position
 	 *            - the initial index, or first place the word is found at
 	 */
-	public PrintResult(String file, int frequency, int position) {
+	public SearchResult(String file, int frequency, int position) {
 		this.frequency = frequency;
 		this.file = file;
 		this.position = position;
@@ -27,7 +25,7 @@ public class PrintResult implements Comparable<PrintResult> {
 	 * then their initial index, then their file name
 	 */
 	@Override
-	public int compareTo(PrintResult o) {
+	public int compareTo(SearchResult o) {
 
 		int frequencyHolder = Integer.compare(o.getFrequency(), frequency);
 		if (frequencyHolder == 0) {
@@ -42,16 +40,15 @@ public class PrintResult implements Comparable<PrintResult> {
 	}
 
 	/**
-	 * Updates a PrintResult object's position and frequency from the frequency
-	 * and position of another PrintResult object, resulting in one combined
-	 * PrintResult object
+	 * Updates a SearchResult object's position and frequency from the frequency
+	 * and position of another SearchResult object, resulting in one combined
+	 * SearchResult object
 	 * 
-	 * @param PrintResult
-	 *            - the new PrintResult whose values will be used to update the
-	 *            existing PrintResult object
+	 * @param SearchResult
+	 *            - the new SearchResult whose values will be used to update the
+	 *            existing SearchResult object
 	 */
-	// TODO Rename it to "updateSearchResult".
-	public void updatePrintResult(int frequency, int initalIndex) {
+	public void updateSearchResult(int frequency, int initalIndex) {
 		this.frequency += frequency;
 		if (initalIndex < this.position) {
 			this.position = initalIndex;
@@ -61,7 +58,7 @@ public class PrintResult implements Comparable<PrintResult> {
 	/**
 	 * Getter method for file name
 	 * 
-	 * @return the location of the PrintResult
+	 * @return the location of the SearchResult
 	 */
 	public String getFile() {
 		return file;
@@ -70,7 +67,7 @@ public class PrintResult implements Comparable<PrintResult> {
 	/**
 	 * Getter method for frequency
 	 * 
-	 * @return the PrintResult's frequency
+	 * @return the SearchResult's frequency
 	 */
 	public int getFrequency() {
 		return frequency;
@@ -79,7 +76,7 @@ public class PrintResult implements Comparable<PrintResult> {
 	/**
 	 * Getter method for initial index
 	 * 
-	 * @return the PrintResult's initial index
+	 * @return the SearchResult's initial index
 	 */
 
 	public int getPosition() {

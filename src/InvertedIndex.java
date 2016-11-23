@@ -117,14 +117,10 @@ public class InvertedIndex {
 	 *            - the string to be searched for
 	 * @return list - list of Query objects found as the result of the search
 	 */
-	// TODO This signature is making more sense. So, you do not need to split it.
-	// public List<PrintResult> exactSearch(Stringp[] arrayWords)
-	public List<PrintResult> exactSearch(String stringQuery) {
+	public List<SearchResult> exactSearch(String[] arrayWords) {
 
-		Map<String, PrintResult> resultMap = new HashMap<>();
-		List<PrintResult> list = new ArrayList<>();
-
-		String[] arrayWords = stringQuery.split(" ");
+		Map<String, SearchResult> resultMap = new HashMap<>();
+		List<SearchResult> list = new ArrayList<>();
 
 		for (int i = 0; i < arrayWords.length; i++) {
 			if (invertedIndex.containsKey(arrayWords[i])) {
@@ -135,18 +131,17 @@ public class InvertedIndex {
 					int initalIndex = Collections.min(set);
 
 					if (!resultMap.containsKey(entry.getKey())) {
-						PrintResult result = new PrintResult(entry.getKey(), count, initalIndex);
+						SearchResult result = new SearchResult(entry.getKey(), count, initalIndex);
 						resultMap.put(entry.getKey(), result);
 						list.add(result);
 					} else {
-						PrintResult oldQuery = resultMap.get(entry.getKey());
-						oldQuery.updatePrintResult(count, initalIndex);
+						SearchResult oldQuery = resultMap.get(entry.getKey());
+						oldQuery.updateSearchResult(count, initalIndex);
 					}
 				}
 			}
-			// TODO Just sort it before return. Not here.
-			Collections.sort(list);
 		}
+		Collections.sort(list);
 		return list;
 	}
 
@@ -157,12 +152,10 @@ public class InvertedIndex {
 	 *            - the string to be searched for
 	 * @return list - list of Query objects found as the result of the search
 	 */
-	public List<PrintResult> partialSearch(String stringQuery) {
+	public List<SearchResult> partialSearch(String[] arrayWords) {
 
-		Map<String, PrintResult> resultMap = new HashMap<>();
-		List<PrintResult> list = new ArrayList<>();
-
-		String[] arrayWords = stringQuery.split(" ");
+		Map<String, SearchResult> resultMap = new HashMap<>();
+		List<SearchResult> list = new ArrayList<>();
 
 		for (int i = 0; i < arrayWords.length; i++) {
 			String word = arrayWords[i];
@@ -175,21 +168,20 @@ public class InvertedIndex {
 						int initalIndex = Collections.min(set);
 
 						if (!resultMap.containsKey(entry.getKey())) {
-							PrintResult result = new PrintResult(entry.getKey(), count, initalIndex);
+							SearchResult result = new SearchResult(entry.getKey(), count, initalIndex);
 							resultMap.put(entry.getKey(), result);
 							list.add(result);
 						} else {
-							PrintResult oldQuery = resultMap.get(entry.getKey());
-							oldQuery.updatePrintResult(count, initalIndex);
+							SearchResult oldQuery = resultMap.get(entry.getKey());
+							oldQuery.updateSearchResult(count, initalIndex);
 						}
 					}
 				} else {
 					break;
 				}
 			}
-			// TODO Sort it at the very end.
-			Collections.sort(list);
 		}
+		Collections.sort(list);
 		return list;
 	}
 
