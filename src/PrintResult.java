@@ -1,3 +1,5 @@
+
+// TODO Rename this to "SearchResult", we are not doing anything about "print".
 public class PrintResult implements Comparable<PrintResult> {
 
 	private final String file;
@@ -48,6 +50,7 @@ public class PrintResult implements Comparable<PrintResult> {
 	 *            - the new PrintResult whose values will be used to update the
 	 *            existing PrintResult object
 	 */
+	// TODO Rename it to "updateSearchResult".
 	public void updatePrintResult(int frequency, int initalIndex) {
 		this.frequency += frequency;
 		if (initalIndex < this.position) {
