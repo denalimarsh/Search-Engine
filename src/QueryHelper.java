@@ -35,6 +35,27 @@ public class QueryHelper {
 		try (BufferedReader br = Files.newBufferedReader(path, charset)) {
 			String line = br.readLine();
 			while ((line) != null) {
+				// TODO Since you are using readLine so it will definitely have one "\n" at the end.
+				// So using split("\n") is not making sense since it will always return you ["searhLine", "\n"]
+				// Try this template.
+				line = line.trim();
+				line = line.replaceAll("\\p{Punct}+", "");
+				line = line.replaceAll("\\s+", " ");
+				line = line.toLowerCase();
+				String[] arrayWord = line.split(" ");
+				// This mean "multi-word query"
+				List<PrintResult> list = new ArrayList<>();
+				if (searchFlag == 0) {
+					list = index.exactSearch(arrayWord);
+				} else {
+					list = index.partialSearch(arrayWord);
+				}
+				// TODO Change getbuildQuery() to buildQuery. It does have access.
+				getbuildQuery().put(arrayWord, list);
+				line = br.readLine();
+				// ----- //
+				
+				
 				String[] words = line.split("\n");
 				String cleaned = null;
 				for (int i = 0; i < words.length; i++) {
@@ -157,6 +178,7 @@ public class QueryHelper {
 	 * 
 	 * @return buildQuery
 	 */
+	// TODO No need this method.
 	public TreeMap<String, List<PrintResult>> getbuildQuery() {
 		return buildQuery;
 	}

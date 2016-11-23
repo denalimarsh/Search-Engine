@@ -117,6 +117,8 @@ public class InvertedIndex {
 	 *            - the string to be searched for
 	 * @return list - list of Query objects found as the result of the search
 	 */
+	// TODO This signature is making more sense. So, you do not need to split it.
+	// public List<PrintResult> exactSearch(Stringp[] arrayWords)
 	public List<PrintResult> exactSearch(String stringQuery) {
 
 		Map<String, PrintResult> resultMap = new HashMap<>();
@@ -142,6 +144,7 @@ public class InvertedIndex {
 					}
 				}
 			}
+			// TODO Just sort it before return. Not here.
 			Collections.sort(list);
 		}
 		return list;
@@ -184,6 +187,7 @@ public class InvertedIndex {
 					break;
 				}
 			}
+			// TODO Sort it at the very end.
 			Collections.sort(list);
 		}
 		return list;
