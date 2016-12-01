@@ -4,8 +4,11 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+//TODO: Use a constant for max size like MAX_LINKS where MAX_LINKS = 50;
 public class WebCrawler {
 
+	//TODO These should be final not static
+	//TODO: index can be final
 	private static LinkedList<String> crawlQueue;
 	private static HashSet<String> duplicateSet;
 	private InvertedIndex index;
@@ -31,9 +34,11 @@ public class WebCrawler {
 	 */
 	public void crawl(String seed) {
 
+		//max += MAX_LINKS
 		duplicateSet.add(seed);
 		crawlQueue.add(seed);
 
+		//TODO check against set size instead of i
 		int i = 0;
 		while (crawlQueue.size() > 0 && i != 50) {
 			String currLink = crawlQueue.removeFirst();
@@ -53,6 +58,7 @@ public class WebCrawler {
 		
 		String html = HTMLCleaner.fetchHTML(url);
 		processLinks(url, html);
+		//TODO: Replace method with the one line inside process words
 		String[] words = processWords(html);
 
 		for (int i = 0; i < words.length; i++) {
@@ -78,7 +84,9 @@ public class WebCrawler {
 
 		for (int i = 0; i < links.size(); i++) {
 			
+			//TODO change holder to cleanedLink or something that better describes waht holder is
 				holder = cleanLink(links.get(i), url);
+				//TODO: Check duplicateSet size here as well, and break if larger
 				if (!duplicateSet.contains(holder)) {
 					duplicateSet.add(holder);
 					crawlQueue.add(holder);
@@ -98,6 +106,7 @@ public class WebCrawler {
 	public static String[] processWords(String html) {
 		String text = HTMLCleaner.cleanHTML(html);
 		return HTMLCleaner.parseWords(text);
+		//return HTMLCleaner.parseWords(HTMLCleaner.cleanHTML(html));
 	}
 
 	/**
