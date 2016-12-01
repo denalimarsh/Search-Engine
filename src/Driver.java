@@ -19,7 +19,7 @@ public class Driver {
 		InvertedIndex index = new InvertedIndex();
 		QueryHelper queryHelper = new QueryHelper();
 		WebCrawler crawler = new WebCrawler(index);
-
+		
 		if (parser.hasFlag("-dir")) {
 			if (parser.hasValue("-dir")) {
 				Path input = Paths.get(parser.getValue("-dir"));

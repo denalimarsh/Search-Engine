@@ -6,13 +6,7 @@ import java.util.regex.Pattern;
 /**
  * Parses links from HTML. Assumes the HTML is valid, and all attributes are
  * properly quoted and URL encoded.
- *
- * <p>
- * See the following link for details on the HTML Anchor tag:
- * <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a"> https:
- * //developer.mozilla.org/en-US/docs/Web/HTML/Element/a </a>
-
- * @see LinkTester
+ * 
  */
 public class LinkParser {
 
