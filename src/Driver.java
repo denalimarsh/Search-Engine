@@ -18,12 +18,18 @@ public class Driver {
 		ArgumentParser parser = new ArgumentParser(args);
 		InvertedIndex index = new InvertedIndex();
 		QueryHelper queryHelper = new QueryHelper();
+		WebCrawler crawler = new WebCrawler(index);
 
 		if (parser.hasFlag("-dir")) {
 			if (parser.hasValue("-dir")) {
 				Path input = Paths.get(parser.getValue("-dir"));
 				InvertedIndexBuilder.traverse(input, index);
 			}
+		}
+
+		if (parser.hasFlag("-url")) {
+			String url = parser.getValue("-url");
+			crawler.crawl(url);
 		}
 
 		if (parser.hasFlag("-index")) {
