@@ -186,6 +186,52 @@ public class InvertedIndex {
 	}
 
 	/**
+	 * Returns the size of the inverted index.
+	 * 
+	 * @return
+	 */
+	public int size() {
+		return invertedIndex.size();
+	}
+
+	/**
+	 * Returns true if word is found in the inverted index, false is the word is
+	 * not found in the inverted index.
+	 * 
+	 * @param word
+	 *            the word being searched for in the index.
+	 * @return
+	 */
+	public boolean containsWord(String word) {
+		return invertedIndex.containsKey(word);
+	}
+
+	/**
+	 * Adds an inverted index to another inverted index.
+	 * 
+	 * @param localindex
+	 *            The inverted index to be added.
+	 */
+	public void addIndex(InvertedIndex localIndex) {
+		for (Map.Entry<String, TreeMap<String, TreeSet<Integer>>> entry : localIndex.invertedIndex.entrySet()) {
+			String key = entry.getKey();
+			if (invertedIndex.containsKey(key)) {
+				for (Map.Entry<String, TreeSet<Integer>> secondaryEntry : localIndex.invertedIndex.get(key)
+						.entrySet()) {
+					String path = secondaryEntry.getKey();
+					if (!invertedIndex.get(key).containsKey(path)) {
+						invertedIndex.get(key).put(path, secondaryEntry.getValue());
+					} else {
+						invertedIndex.get(key).get(path).addAll(localIndex.invertedIndex.get(key).get(path));
+					}
+				}
+			} else {
+				invertedIndex.put(key, entry.getValue());
+			}
+		}
+	}
+
+	/**
 	 * Adds quotes to any string, useful in pretty printing JSON
 	 * 
 	 * @param text

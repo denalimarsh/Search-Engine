@@ -20,7 +20,7 @@ public class InvertedIndexBuilder {
 	 *            to
 	 */
 
-	public static void traverse(Path originalPath, InvertedIndex index) {
+	public void traverse(Path originalPath, InvertedIndex index) {
 		try (DirectoryStream<Path> listing = Files.newDirectoryStream(originalPath)) {
 			for (Path path : listing) {
 				if (Files.isDirectory(path)) {

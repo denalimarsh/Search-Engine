@@ -16,7 +16,7 @@ public class QueryHelper {
 	/**
 	 * Initializes a new QueryHelper object
 	 */
-	public QueryHelper() {
+	public QueryHelper(InvertedIndex inputIndex) {
 		buildQuery = new TreeMap<String, List<SearchResult>>();
 	}
 
@@ -69,6 +69,16 @@ public class QueryHelper {
 	 */
 	public void printHelper(Path path) {
 		QueryHelper.printQuery(path, buildQuery);
+	}
+	
+	/**
+	 * Wrapper method to allow the driver to access the print Query method
+	 * 
+	 * @param path
+	 *            - the file location to print the results to
+	 */
+	public static void printQueryHelper(Path path, TreeMap<String, List<SearchResult>> finishedBuildQuery) {
+		QueryHelper.printQuery(path, finishedBuildQuery);
 	}
 
 	/**

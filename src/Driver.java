@@ -7,7 +7,8 @@ public class Driver {
 	 * The main driver method which reads in the input arguments, instantiates
 	 * the main InvertedIndex data structure, and if appropriate, calls
 	 * traverse. If appropriate, calls parseQuery, exactSearch, and
-	 * partialSearch, and printHelper.
+	 * partialSearch, and printHelper. If the multi flag is enabled, 
+	 * the InvertedIndex and its methods will execute as multithreaded.
 	 * 
 	 * @param args
 	 *            - the command line arguments which designate where the input
@@ -16,14 +17,42 @@ public class Driver {
 	public static void main(String[] args) {
 
 		ArgumentParser parser = new ArgumentParser(args);
-		InvertedIndex index = new InvertedIndex();
-		QueryHelper queryHelper = new QueryHelper();
-		WebCrawler crawler = new WebCrawler(index);
+		InvertedIndex index;
+		InvertedIndexBuilder indexBuilder;
+		QueryHelper queryHelper;
+		WebCrawler crawler;
+		WorkQueue workers = null;
+
+		if (parser.hasFlag("-multi") && parser.getValue("-multi") != null) {
+			int threadCount = 5;
+			try {
+				if (Integer.parseInt(parser.getValue("-multi")) != 0) {
+					threadCount = Integer.parseInt(parser.getValue("-multi"));
+				}
+			} catch (Exception e) {
+				System.out.println("Error occured while obtaining the number of threads");
+			}
+			ThreadSafeInvertedIndex threadSafeIndex = new ThreadSafeInvertedIndex();
+			index = threadSafeIndex;
+			workers = new WorkQueue(threadCount);
+			crawler = new MultithreadedWebCrawler(threadSafeIndex, workers);
+			indexBuilder = new MultithreadedInvertedIndexBuilder(threadSafeIndex, workers);
+			queryHelper = new MultithreadedQueryHelper(threadSafeIndex, workers);
+			
+		} else {
+			indexBuilder = new InvertedIndexBuilder();
+			index = new InvertedIndex();
+			crawler = new WebCrawler(index);
+			queryHelper = new QueryHelper(index);
+		}
 
 		if (parser.hasFlag("-dir")) {
 			if (parser.hasValue("-dir")) {
-				Path input = Paths.get(parser.getValue("-dir"));
-				InvertedIndexBuilder.traverse(input, index);
+				Path inputPath = Paths.get(parser.getValue("-dir"));
+				indexBuilder.traverse(inputPath, index);
+				if (workers != null) {
+					workers.finish();
+				}
 			}
 		}
 
