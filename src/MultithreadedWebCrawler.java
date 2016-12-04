@@ -28,16 +28,16 @@ public class MultithreadedWebCrawler extends WebCrawler {
 
 		@Override
 		public void run() {
-			
+
 			String html;
 			URL base;
-			
+
 			try {
 				html = HTMLCleaner.fetchHTML(url);
 				base = new URL(url);
 				ArrayList<String> links = LinkParser.listLinks(html);
-				
-				for (int i = 0; i < links.size(); i++)  {
+
+				for (int i = 0; i < links.size(); i++) {
 					URL absolute = new URL(base, links.get(i));
 					URL finished = new URL(absolute.getProtocol(), absolute.getHost(), absolute.getFile());
 					String absoluteURL = finished.toString();
@@ -45,8 +45,8 @@ public class MultithreadedWebCrawler extends WebCrawler {
 					if (linkSet.size() > MAX_LINKS) {
 						break;
 					}
-					
-					if (!linkSet.contains(absoluteURL)){
+
+					if (!linkSet.contains(absoluteURL)) {
 						linkSet.add(absoluteURL);
 						workers.execute(new CrawlRun(absoluteURL));
 					}
@@ -55,10 +55,10 @@ public class MultithreadedWebCrawler extends WebCrawler {
 				html = HTMLCleaner.cleanHTML(html);
 				String[] results = HTMLCleaner.parseWords(html);
 
-				for (int i = 0; i < results.length; i++){
-					localindex.add(results[i], url, i+1);
+				for (int i = 0; i < results.length; i++) {
+					localindex.add(results[i], url, i + 1);
 				}
-				
+
 				multipleIndex.addIndex(localindex);
 			} catch (IOException e) {
 				System.out.println("Error accessing link: " + url);

@@ -1,15 +1,15 @@
 import java.util.List;
 import java.nio.file.Path;
 
-public class ThreadSafeInvertedIndex extends InvertedIndex{
-	
+public class ThreadSafeInvertedIndex extends InvertedIndex {
+
 	private ReadWriteLock lock;
 
 	public ThreadSafeInvertedIndex() {
 		super();
 		this.lock = new ReadWriteLock();
 	}
-	
+
 	@Override
 	public void add(String word, String path, int position) {
 		lock.lockReadWrite();
@@ -20,7 +20,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex{
 			lock.unlockReadWrite();
 		}
 	}
-	
+
 	@Override
 	public void print(Path path) {
 		lock.lockReadWrite();
@@ -31,9 +31,9 @@ public class ThreadSafeInvertedIndex extends InvertedIndex{
 			lock.unlockReadWrite();
 		}
 	}
-	
+
 	@Override
-	public List<SearchResult> partialSearch(String[] querywords)  {
+	public List<SearchResult> partialSearch(String[] querywords) {
 		lock.lockReadWrite();
 		try {
 			return super.partialSearch(querywords);
@@ -42,9 +42,9 @@ public class ThreadSafeInvertedIndex extends InvertedIndex{
 			lock.unlockReadWrite();
 		}
 	}
-	
+
 	@Override
-	public List<SearchResult> exactSearch(String[] querywords)  {
+	public List<SearchResult> exactSearch(String[] querywords) {
 		lock.lockReadWrite();
 		try {
 			return super.exactSearch(querywords);
@@ -53,9 +53,9 @@ public class ThreadSafeInvertedIndex extends InvertedIndex{
 			lock.unlockReadWrite();
 		}
 	}
-	
+
 	@Override
-	public void addIndex(InvertedIndex partialindex)  {
+	public void addIndex(InvertedIndex partialindex) {
 		lock.lockReadWrite();
 		try {
 			super.addIndex(partialindex);
@@ -64,7 +64,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex{
 			lock.unlockReadWrite();
 		}
 	}
-	
+
 	@Override
 	public boolean containsWord(String word) {
 		lock.lockReadWrite();
@@ -75,7 +75,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex{
 			lock.unlockReadWrite();
 		}
 	}
-	
+
 	@Override
 	public int size() {
 		lock.lockReadWrite();
@@ -86,9 +86,9 @@ public class ThreadSafeInvertedIndex extends InvertedIndex{
 			lock.unlockReadWrite();
 		}
 	}
-	
+
 	@Override
-	public String toString()  {
+	public String toString() {
 		lock.lockReadWrite();
 		try {
 			return super.toString();
@@ -97,5 +97,5 @@ public class ThreadSafeInvertedIndex extends InvertedIndex{
 			lock.unlockReadWrite();
 		}
 	}
-	
+
 }

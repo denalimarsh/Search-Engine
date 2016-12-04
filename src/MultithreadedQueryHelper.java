@@ -7,13 +7,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
 
-public class MultithreadedQueryHelper extends QueryHelper{
+public class MultithreadedQueryHelper extends QueryHelper {
 
 	private final TreeMap<String, List<SearchResult>> searchResult;
 	private final ThreadSafeInvertedIndex multipleIndex;
 	private ReadWriteLock lock;
 	private final WorkQueue workers;
-	
+
 	public MultithreadedQueryHelper(ThreadSafeInvertedIndex index, WorkQueue workers) {
 		super(index);
 		searchResult = new TreeMap<String, List<SearchResult>>();
@@ -39,7 +39,7 @@ public class MultithreadedQueryHelper extends QueryHelper{
 		}
 
 	}
-	
+
 	private class QueryMinions implements Runnable {
 
 		private String key;
@@ -74,9 +74,9 @@ public class MultithreadedQueryHelper extends QueryHelper{
 			}
 		}
 	}
-	
+
 	public void print(Path path) {
 		QueryHelper.printQueryHelper(path, searchResult);
 	}
-	
+
 }

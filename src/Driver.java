@@ -84,6 +84,5 @@ public class Driver {
 			Path results = Paths.get(parser.getValue("-results", "results.json"));
 			queryHelper.printHelper(results);
 		}
-
 	}
 }
