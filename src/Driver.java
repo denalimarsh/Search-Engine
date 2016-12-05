@@ -22,6 +22,7 @@ public class Driver {
 		QueryHelper queryHelper;
 		WebCrawler crawler;
 		WorkQueue workers = null;
+		boolean searchFlag;
 
 		if (parser.hasFlag("-multi") && parser.getValue("-multi") != null) {
 			int threadCount = 5;
@@ -68,15 +69,17 @@ public class Driver {
 
 		if (parser.hasFlag("-query")) {
 			if (parser.hasValue("-query")) {
+				searchFlag = true;
 				Path queryPath = Paths.get(parser.getValue("-query"));
-				queryHelper.parseQuery(queryPath, 1, index);
+				queryHelper.parseQuery(queryPath, searchFlag, index);
 			}
 		}
 
 		if (parser.hasFlag("-exact")) {
 			if (parser.hasValue("-exact")) {
+				searchFlag = false;
 				Path exactPath = Paths.get(parser.getValue("-exact"));
-				queryHelper.parseQuery(exactPath, 0, index);
+				queryHelper.parseQuery(exactPath, searchFlag, index);
 			}
 		}
 

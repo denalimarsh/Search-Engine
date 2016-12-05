@@ -20,7 +20,7 @@ public class MultithreadedInvertedIndexBuilder extends InvertedIndexBuilder {
 				if (Files.isDirectory(path)) {
 					traverse(path, index);
 				} else if (path.toString().toLowerCase().endsWith(".txt")) {
-					workers.execute(new BuilderRun(path));
+					workers.execute(new BuilderRunner(path));
 				}
 			}
 		} catch (IOException e) {
@@ -28,13 +28,12 @@ public class MultithreadedInvertedIndexBuilder extends InvertedIndexBuilder {
 		}
 	}
 
-	//TODO: Change name to BuilderRunner? something like that
-	private class BuilderRun implements Runnable {
+	private class BuilderRunner implements Runnable {
 
 		private InvertedIndex local;
 		private Path file;
 
-		BuilderRun(Path file) {
+		BuilderRunner(Path file) {
 			this.file = file;
 			local = new InvertedIndex();
 		}

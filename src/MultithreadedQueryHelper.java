@@ -22,8 +22,7 @@ public class MultithreadedQueryHelper extends QueryHelper {
 		this.workers = workers;
 	}
 
-	//TODO use boolean for search flag
-	public void parseQuery(Path file, int searchFlag) throws IOException {
+	public void parseQuery(Path file, boolean searchFlag) throws IOException {
 		try (BufferedReader reader = Files.newBufferedReader(file, Charset.forName("UTF-8"));) {
 			String line;
 			while ((line = reader.readLine()) != null) {
@@ -41,23 +40,22 @@ public class MultithreadedQueryHelper extends QueryHelper {
 
 	}
 
-	//TODO change name of line to queries
 	private class QueryMinions implements Runnable {
 
 		private String key;
-		private int searchFlag;
-		private String[] line;
+		private boolean searchFlag;
+		private String[] queries;
 
-		public QueryMinions(String[] line, String key, int searchFlag) {
-			this.line = line;
+		public QueryMinions(String[] line, String key, boolean searchFlag) {
+			this.queries = line;
 			this.key = key;
 			this.searchFlag = searchFlag;
 		}
 
 		@Override
 		public void run() {
-			if (searchFlag == 0) {
-				List<SearchResult> results = multipleIndex.partialSearch(line);
+			if (searchFlag == true) {
+				List<SearchResult> results = multipleIndex.partialSearch(queries);
 				lock.lockReadWrite();
 				try {
 					searchResult.put(key, results);
@@ -65,8 +63,8 @@ public class MultithreadedQueryHelper extends QueryHelper {
 					lock.unlockReadWrite();
 				}
 			}
-			if (searchFlag == 1) {
-				List<SearchResult> results = multipleIndex.exactSearch(line);
+			if (searchFlag == false) {
+				List<SearchResult> results = multipleIndex.exactSearch(queries);
 				lock.lockReadWrite();
 				try {
 					searchResult.put(key, results);
@@ -77,9 +75,14 @@ public class MultithreadedQueryHelper extends QueryHelper {
 		}
 	}
 
-	//TODO Lock read here if you are using locks
 	public void print(Path path) {
-		QueryHelper.printQueryHelper(path, searchResult);
+		lock.lockReadOnly();
+		try {
+			QueryHelper.printQueryHelper(path, searchResult);
+
+		} finally {
+			lock.lockReadOnly();
+		}
 	}
 
 }

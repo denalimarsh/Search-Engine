@@ -27,7 +27,7 @@ public class QueryHelper {
 	 *            - the path to be read and parsed into queries
 	 * @return uniqueList - a sorted, unique list of Strings
 	 */
-	public void parseQuery(Path path, int searchFlag, InvertedIndex index) {
+	public void parseQuery(Path path, boolean searchFlag, InvertedIndex index) {
 
 		Charset charset = java.nio.charset.StandardCharsets.UTF_8;
 
@@ -44,7 +44,7 @@ public class QueryHelper {
 
 				List<SearchResult> list = new ArrayList<>();
 
-				if (searchFlag == 0) {
+				if (searchFlag == false) {
 					list = index.exactSearch(arrayWord);
 				} else {
 					list = index.partialSearch(arrayWord);

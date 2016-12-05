@@ -1,11 +1,9 @@
 import java.util.List;
 import java.nio.file.Path;
 
-//TODO If method doesn't change index data, just use read lock
 public class ThreadSafeInvertedIndex extends InvertedIndex {
 
-	//TODO make final
-	private ReadWriteLock lock;
+	private final ReadWriteLock lock;
 
 	public ThreadSafeInvertedIndex() {
 		super();
@@ -23,39 +21,36 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 		}
 	}
 
-	//TODO print only needs lock read unless you are changing the data in the index
 	@Override
 	public void print(Path path) {
-		lock.lockReadWrite();
+		lock.lockReadOnly();
 		try {
 			super.print(path);
 
 		} finally {
-			lock.unlockReadWrite();
+			lock.lockReadOnly();
 		}
 	}
 
-	//TODO Lock just read
 	@Override
 	public List<SearchResult> partialSearch(String[] querywords) {
-		lock.lockReadWrite();
+		lock.lockReadOnly();
 		try {
 			return super.partialSearch(querywords);
 
 		} finally {
-			lock.unlockReadWrite();
+			lock.lockReadOnly();
 		}
 	}
 
-	//TODO Same here
 	@Override
 	public List<SearchResult> exactSearch(String[] querywords) {
-		lock.lockReadWrite();
+		lock.lockReadOnly();
 		try {
 			return super.exactSearch(querywords);
 
 		} finally {
-			lock.unlockReadWrite();
+			lock.lockReadOnly();
 		}
 	}
 
@@ -69,38 +64,37 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 			lock.unlockReadWrite();
 		}
 	}
-	
 
 	@Override
 	public boolean containsWord(String word) {
-		lock.lockReadWrite();
+		lock.lockReadOnly();
 		try {
 			return super.containsWord(word);
 
 		} finally {
-			lock.unlockReadWrite();
+			lock.lockReadOnly();
 		}
 	}
 
 	@Override
 	public int size() {
-		lock.lockReadWrite();
+		lock.lockReadOnly();
 		try {
 			return super.size();
 
 		} finally {
-			lock.unlockReadWrite();
+			lock.lockReadOnly();
 		}
 	}
 
 	@Override
 	public String toString() {
-		lock.lockReadWrite();
+		lock.lockReadOnly();
 		try {
 			return super.toString();
 
 		} finally {
-			lock.unlockReadWrite();
+			lock.unlockReadOnly();
 		}
 	}
 
