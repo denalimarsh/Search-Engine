@@ -3,6 +3,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+//TODO Add javadocs to classes and public methods
 public class MultithreadedWebCrawler extends WebCrawler {
 
 	private final ThreadSafeInvertedIndex multipleIndex;
@@ -17,6 +18,7 @@ public class MultithreadedWebCrawler extends WebCrawler {
 		this.workers = workers;
 	}
 
+	//TODO rename to CrawlRunner
 	private class CrawlRun implements Runnable {
 		private String url;
 		private InvertedIndex localindex;
@@ -66,6 +68,8 @@ public class MultithreadedWebCrawler extends WebCrawler {
 		}
 	}
 
+	//TODO Either use or remove
+	
 	public void crawlHelper(String url) {
 		if (linkSet.size() < MAX_LINKS && !linkSet.contains(url)) {
 			linkSet.add(url);

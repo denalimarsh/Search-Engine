@@ -28,6 +28,7 @@ public class MultithreadedInvertedIndexBuilder extends InvertedIndexBuilder {
 		}
 	}
 
+	//TODO: Change name to BuilderRunner? something like that
 	private class BuilderRun implements Runnable {
 
 		private InvertedIndex local;
