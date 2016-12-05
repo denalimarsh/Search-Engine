@@ -1,8 +1,10 @@
 import java.util.List;
 import java.nio.file.Path;
 
+//TODO If method doesn't change index data, just use read lock
 public class ThreadSafeInvertedIndex extends InvertedIndex {
 
+	//TODO make final
 	private ReadWriteLock lock;
 
 	public ThreadSafeInvertedIndex() {
@@ -21,6 +23,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 		}
 	}
 
+	//TODO print only needs lock read unless you are changing the data in the index
 	@Override
 	public void print(Path path) {
 		lock.lockReadWrite();
@@ -32,6 +35,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 		}
 	}
 
+	//TODO Lock just read
 	@Override
 	public List<SearchResult> partialSearch(String[] querywords) {
 		lock.lockReadWrite();
@@ -43,6 +47,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 		}
 	}
 
+	//TODO Same here
 	@Override
 	public List<SearchResult> exactSearch(String[] querywords) {
 		lock.lockReadWrite();
@@ -64,6 +69,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 			lock.unlockReadWrite();
 		}
 	}
+	
 
 	@Override
 	public boolean containsWord(String word) {

@@ -99,12 +99,14 @@ public class WorkQueue {
     }
     
     
+    //TODO: change to increment pending or something like it that is more specific
 	private void increase() {
 		synchronized(queue){
 			pending++;
 		}
 	}
 
+	//TODO Remove assert
 	private void decrease() {
 		synchronized(queue){
 			assert pending > 0;

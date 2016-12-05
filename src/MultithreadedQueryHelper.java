@@ -22,6 +22,7 @@ public class MultithreadedQueryHelper extends QueryHelper {
 		this.workers = workers;
 	}
 
+	//TODO use boolean for search flag
 	public void parseQuery(Path file, int searchFlag) throws IOException {
 		try (BufferedReader reader = Files.newBufferedReader(file, Charset.forName("UTF-8"));) {
 			String line;
@@ -40,6 +41,7 @@ public class MultithreadedQueryHelper extends QueryHelper {
 
 	}
 
+	//TODO change name of line to queries
 	private class QueryMinions implements Runnable {
 
 		private String key;
@@ -75,6 +77,7 @@ public class MultithreadedQueryHelper extends QueryHelper {
 		}
 	}
 
+	//TODO Lock read here if you are using locks
 	public void print(Path path) {
 		QueryHelper.printQueryHelper(path, searchResult);
 	}
