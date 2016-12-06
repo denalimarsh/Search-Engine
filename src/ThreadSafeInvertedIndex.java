@@ -28,7 +28,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 			super.print(path);
 
 		} finally {
-			lock.lockReadOnly();
+			lock.unlockReadOnly();
 		}
 	}
 
@@ -39,7 +39,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 			return super.partialSearch(querywords);
 
 		} finally {
-			lock.lockReadOnly();
+			lock.unlockReadOnly();
 		}
 	}
 
@@ -50,7 +50,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 			return super.exactSearch(querywords);
 
 		} finally {
-			lock.lockReadOnly();
+			lock.unlockReadOnly();
 		}
 	}
 
@@ -72,7 +72,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 			return super.containsWord(word);
 
 		} finally {
-			lock.lockReadOnly();
+			lock.unlockReadOnly();
 		}
 	}
 
@@ -83,7 +83,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex {
 			return super.size();
 
 		} finally {
-			lock.lockReadOnly();
+			lock.unlockReadOnly();
 		}
 	}
 

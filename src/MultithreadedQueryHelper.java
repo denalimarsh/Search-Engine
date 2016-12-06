@@ -81,7 +81,7 @@ public class MultithreadedQueryHelper extends QueryHelper {
 			QueryHelper.printQueryHelper(path, searchResult);
 
 		} finally {
-			lock.lockReadOnly();
+			lock.unlockReadOnly();
 		}
 	}
 
