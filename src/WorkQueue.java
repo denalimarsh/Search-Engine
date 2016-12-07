@@ -61,10 +61,12 @@ public class WorkQueue {
         }
     }
 
-    public synchronized void finish() {
+    public void finish() {
     	try {
-			while (pending > 0) {
-				this.wait();
+    		synchronized(queue){
+				while (pending > 0) {
+					queue.wait();
+				}
     		}
 		}
 		catch (InterruptedException e) {
@@ -96,14 +98,19 @@ public class WorkQueue {
         return workers.length;
     }
     
-	private synchronized void increase() {
-		pending++;
+    
+	private void increase() {
+		synchronized(queue){
+			pending++;
+		}
 	}
 
-	private synchronized void decrease() {
-		pending--;
-		if (pending <= 0) {
-			this.notifyAll();
+	private void decrease() {
+		synchronized(queue){
+			pending--;
+			if (pending <= 0) {
+				queue.notifyAll();
+			}
 		}
 	}
 	
@@ -128,7 +135,7 @@ public class WorkQueue {
                             queue.wait();
                         }
                         catch (InterruptedException ex) {
-                            System.err.println("Warning: Work queue interrupted.");
+                            System.err.println("Work queue interrupted.");
                             Thread.currentThread().interrupt();
                         }
                     }
@@ -145,8 +152,8 @@ public class WorkQueue {
                     r.run();
                 }
                 catch (RuntimeException ex) {
-                    System.err.println("Warning: Work queue encountered an "
-                            + "exception while running.");
+                    System.err.println("Work queue encountered an "
+                            + "exception");
                 }finally{
                 	decrease();
                 }
