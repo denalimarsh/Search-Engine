@@ -11,14 +11,12 @@ public class MultithreadedQueryHelper extends QueryHelper {
 
 	private final TreeMap<String, List<SearchResult>> searchResult;
 	private final ThreadSafeInvertedIndex multipleIndex;
-	private ReadWriteLock lock;
 	private final WorkQueue workers;
 
 	public MultithreadedQueryHelper(ThreadSafeInvertedIndex index, WorkQueue workers) {
 		super(index);
 		searchResult = new TreeMap<String, List<SearchResult>>();
 		multipleIndex = index;
-		lock = new ReadWriteLock();
 		this.workers = workers;
 	}
 
@@ -56,21 +54,11 @@ public class MultithreadedQueryHelper extends QueryHelper {
 		public void run() {
 			if (searchFlag == true) {
 				List<SearchResult> results = multipleIndex.partialSearch(queries);
-				lock.lockReadWrite();
-				try {
-					searchResult.put(key, results);
-				} finally {
-					lock.unlockReadWrite();
-				}
+				searchResult.put(key, results);
 			}
 			if (searchFlag == false) {
 				List<SearchResult> results = multipleIndex.exactSearch(queries);
-				lock.lockReadWrite();
-				try {
-					searchResult.put(key, results);
-				} finally {
-					lock.unlockReadWrite();
-				}
+				searchResult.put(key, results);
 			}
 		}
 	}

@@ -54,26 +54,23 @@ public class WorkQueue {
      *            work request (in the form of a {@link Runnable} object)
      */
     public void execute(Runnable r) {
-        synchronized (queue) {
-        	increase();
+    	increase();
+    	synchronized (queue) {
             queue.addLast(r);
             queue.notifyAll();
         }
     }
 
-    public void finish() {
-    	try {
-    		synchronized(queue){
-				while (pending > 0) {
-					queue.wait();
-				}
-    		}
-		}
-		catch (InterruptedException e) {
-		
-		}
-		
-    }
+    public synchronized void finish() {
+		while (pending > 0) {
+			try {
+				this.wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}    		
+	}
+    
 
     /**
      * Asks the queue to shutdown. Any unprocessed work will not be finished,
@@ -99,18 +96,14 @@ public class WorkQueue {
     }
     
     
-	private void increase() {
-		synchronized(queue){
-			pending++;
-		}
+	private synchronized void increase() {
+		pending++;
 	}
 
-	private void decrease() {
-		synchronized(queue){
-			pending--;
-			if (pending <= 0) {
-				queue.notifyAll();
-			}
+	private synchronized void decrease() {
+		pending--;
+		if (pending <= 0) {
+			this.notifyAll();			
 		}
 	}
 	
