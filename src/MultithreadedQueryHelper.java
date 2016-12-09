@@ -54,11 +54,15 @@ public class MultithreadedQueryHelper extends QueryHelper {
 		public void run() {
 			if (searchFlag == true) {
 				List<SearchResult> results = multipleIndex.partialSearch(queries);
-				searchResult.put(key, results);
+				synchronized (searchResult) {
+					searchResult.put(key, results);
+				}
 			}
 			if (searchFlag == false) {
 				List<SearchResult> results = multipleIndex.exactSearch(queries);
-				searchResult.put(key, results);
+				synchronized (searchResult) {
+					searchResult.put(key, results);
+				}
 			}
 		}
 	}

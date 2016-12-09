@@ -7,8 +7,8 @@ public class Driver {
 	 * The main driver method which reads in the input arguments, instantiates
 	 * the main InvertedIndex data structure, and if appropriate, calls
 	 * traverse. If appropriate, calls parseQuery, exactSearch, and
-	 * partialSearch, and printHelper. If the multi flag is enabled, 
-	 * the InvertedIndex and its methods will execute as multithreaded.
+	 * partialSearch, and printHelper. If the multi flag is enabled, the
+	 * InvertedIndex and its methods will execute as multithreaded.
 	 * 
 	 * @param args
 	 *            - the command line arguments which designate where the input
@@ -39,7 +39,7 @@ public class Driver {
 			crawler = new MultithreadedWebCrawler(threadSafeIndex, workers);
 			indexBuilder = new MultithreadedInvertedIndexBuilder(threadSafeIndex, workers);
 			queryHelper = new MultithreadedQueryHelper(threadSafeIndex, workers);
-			
+
 		} else {
 			indexBuilder = new InvertedIndexBuilder();
 			index = new InvertedIndex();
@@ -59,7 +59,7 @@ public class Driver {
 
 		if (parser.hasFlag("-url")) {
 			String url = parser.getValue("-url");
-			crawler.crawl(url);
+			crawler.crawlHelper(url);
 		}
 
 		if (parser.hasFlag("-index")) {

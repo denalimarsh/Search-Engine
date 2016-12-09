@@ -54,11 +54,12 @@ public class WorkQueue {
      *            work request (in the form of a {@link Runnable} object)
      */
     public void execute(Runnable r) {
-    	increase();
+    	
     	synchronized (queue) {
             queue.addLast(r);
             queue.notifyAll();
         }
+    	increase();
     }
 
     public synchronized void finish() {
@@ -148,7 +149,7 @@ public class WorkQueue {
                     System.err.println("Work queue encountered an "
                             + "exception");
                 }finally{
-                	decrease();
+					decrease();
                 }
             }
         }
