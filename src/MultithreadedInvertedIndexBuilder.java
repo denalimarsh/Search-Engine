@@ -37,7 +37,7 @@ public class MultithreadedInvertedIndexBuilder extends InvertedIndexBuilder {
 			this.file = file;
 			local = new InvertedIndex();
 		}
-
+		
 		@Override
 		public void run() {
 			InvertedIndexBuilder.parseFile(this.file, local);

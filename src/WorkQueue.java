@@ -54,24 +54,26 @@ public class WorkQueue {
      *            work request (in the form of a {@link Runnable} object)
      */
     public void execute(Runnable r) {
-    	
-    	synchronized (queue) {
+        synchronized (queue) {
+        	increase();
             queue.addLast(r);
             queue.notifyAll();
         }
-    	increase();
     }
 
-    public synchronized void finish() {
-		while (pending > 0) {
-			try {
-				this.wait();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}    		
-	}
-    
+    public void finish() {
+    	try {
+    		synchronized(queue){
+				while (pending > 0) {
+					queue.wait();
+				}
+    		}
+		}
+		catch (InterruptedException e) {
+		
+		}
+		
+    }
 
     /**
      * Asks the queue to shutdown. Any unprocessed work will not be finished,
@@ -97,14 +99,19 @@ public class WorkQueue {
     }
     
     
-	private synchronized void increase() {
-		pending++;
+	private void increase() {
+		synchronized(queue){
+			pending++;
+		}
 	}
 
-	private synchronized void decrease() {
-		pending--;
-		if (pending <= 0) {
-			this.notifyAll();			
+	private void decrease() {
+		synchronized(queue){
+			assert pending > 0;
+			pending--;
+			if (pending <= 0) {
+				queue.notifyAll();
+			}
 		}
 	}
 	
@@ -129,7 +136,7 @@ public class WorkQueue {
                             queue.wait();
                         }
                         catch (InterruptedException ex) {
-                            System.err.println("Work queue interrupted.");
+                            System.err.println("Warning: Work queue interrupted.");
                             Thread.currentThread().interrupt();
                         }
                     }
@@ -146,8 +153,8 @@ public class WorkQueue {
                     r.run();
                 }
                 catch (RuntimeException ex) {
-                    System.err.println("Work queue encountered an "
-                            + "exception");
+                    System.err.println("Warning: Work queue encountered an "
+                            + "exception while running.");
                 }finally{
                 	decrease();
                 }

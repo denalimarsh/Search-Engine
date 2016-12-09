@@ -46,7 +46,7 @@ public class MultithreadedWebCrawler extends WebCrawler {
 						break;
 					}
 
-					if (!linkSet.contains(absoluteURL)) {
+					if (!linkSet.contains(absoluteURL) && linkSet.size() < MAX_LINKS) {
 						linkSet.add(absoluteURL);
 						workers.execute(new CrawlRunner(absoluteURL));
 					}

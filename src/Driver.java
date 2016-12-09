@@ -27,15 +27,15 @@ public class Driver {
 		if (parser.hasFlag("-multi") && parser.getValue("-multi") != null) {
 			int threadCount = 5;
 			try {
-				if (Integer.parseInt(parser.getValue("-multi")) != 0) {
+				if (Integer.parseInt(parser.getValue("-multi")) > 0) {
 					threadCount = Integer.parseInt(parser.getValue("-multi"));
 				}
 			} catch (Exception e) {
 				System.out.println("Error occured while obtaining the number of threads");
 			}
+			workers = new WorkQueue(threadCount);
 			ThreadSafeInvertedIndex threadSafeIndex = new ThreadSafeInvertedIndex();
 			index = threadSafeIndex;
-			workers = new WorkQueue(threadCount);
 			crawler = new MultithreadedWebCrawler(threadSafeIndex, workers);
 			indexBuilder = new MultithreadedInvertedIndexBuilder(threadSafeIndex, workers);
 			queryHelper = new MultithreadedQueryHelper(threadSafeIndex, workers);
