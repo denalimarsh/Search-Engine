@@ -1,2 +1,18 @@
 {
+	"ebook gutenberg license": [
+		{
+			"where": "root\11.txt",
+			"count": 52,
+			"index": 11
+		}
+	],
+	"jews the": [
+		{
+			"where": "root\11.txt",
+			"count": 1804,
+			"index": 14
+		}
+	],
+	"total": [
+	]
 }

@@ -149,7 +149,7 @@ public class WorkQueue {
                     System.err.println("Work queue encountered an "
                             + "exception");
                 }finally{
-					decrease();
+                	decrease();
                 }
             }
         }
