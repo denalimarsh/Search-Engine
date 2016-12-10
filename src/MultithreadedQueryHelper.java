@@ -56,21 +56,11 @@ public class MultithreadedQueryHelper extends QueryHelper {
 		public void run() {
 			if (searchFlag == true) {
 				List<SearchResult> results = multipleIndex.partialSearch(queries);
-				lock.lockReadWrite();
-				try {
-					searchResult.put(key, results);
-				} finally {
-					lock.unlockReadWrite();
-				}
+				searchResult.put(key, results);	
 			}
 			if (searchFlag == false) {
 				List<SearchResult> results = multipleIndex.exactSearch(queries);
-				lock.lockReadWrite();
-				try {
-					searchResult.put(key, results);
-				} finally {
-					lock.unlockReadWrite();
-				}
+				searchResult.put(key, results);
 			}
 		}
 	}
