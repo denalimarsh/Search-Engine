@@ -7,30 +7,29 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
 
-public class MultithreadedQueryHelper extends QueryHelper {
+public class MultithreadedQueryHelper implements QueryHelperInterface {
 
-	private final TreeMap<String, List<SearchResult>> searchResult;
-	private final ThreadSafeInvertedIndex multipleIndex;
-	private ReadWriteLock lock;
+	private final TreeMap<String, List<SearchResult>> buildResult;
+	private final ThreadSafeInvertedIndex multiIndex;
 	private final WorkQueue workers;
+	private final ReadWriteLock lock;
 
 	public MultithreadedQueryHelper(ThreadSafeInvertedIndex index, WorkQueue workers) {
-		super(index);
-		searchResult = new TreeMap<String, List<SearchResult>>();
-		multipleIndex = index;
-		lock = new ReadWriteLock();
 		this.workers = workers;
+		buildResult = new TreeMap<String, List<SearchResult>>();
+		multiIndex = index;
+		lock = new ReadWriteLock();
 	}
+	
+	public void parseQueryFile(Path filename, boolean searchType) throws IOException {
+		try (BufferedReader reader = Files.newBufferedReader(filename, Charset.forName("UTF-8"));) {
 
-	public void parseQuery(Path file, boolean searchFlag) throws IOException {
-		try (BufferedReader reader = Files.newBufferedReader(file, Charset.forName("UTF-8"));) {
 			String line;
+
 			while ((line = reader.readLine()) != null) {
-				String[] words = line.trim().replaceAll("\\p{Punct}+", "").toLowerCase().split("\\s+");
-				Arrays.sort(words);
-				String searchString = String.join(" ", words);
-				workers.execute(new QueryMinions(words, searchString, searchFlag));
+				workers.execute(new QueryRunner(line, searchType));
 			}
+
 			workers.finish();
 			reader.close();
 
@@ -40,49 +39,48 @@ public class MultithreadedQueryHelper extends QueryHelper {
 
 	}
 
-	private class QueryMinions implements Runnable {
+	private class QueryRunner implements Runnable {
 
-		private String key;
-		private boolean searchFlag;
-		private String[] queries;
+		private String line;
+		private boolean flag;
 
-		public QueryMinions(String[] line, String key, boolean searchFlag) {
-			this.queries = line;
-			this.key = key;
-			this.searchFlag = searchFlag;
+		public QueryRunner(String line, boolean flag) {
+			this.line = line;
+			this.flag = flag;
 		}
 
 		@Override
 		public void run() {
-			if (searchFlag == true) {
-				List<SearchResult> results = multipleIndex.partialSearch(queries);
-				lock.lockReadWrite();
-				try {
-					searchResult.put(key, results);
-				} finally {
-					lock.unlockReadWrite();
-				}
+
+			String[] words = line.trim().replaceAll("\\p{Punct}+", "").toLowerCase().split("\\s+");
+			Arrays.sort(words);
+			String searchname = String.join(" ", words);
+			List<SearchResult> results = (flag) ? multiIndex.exactSearch(words) : multiIndex.partialSearch(words);
+
+			lock.lockReadWrite();
+			try {
+				buildResult.put(searchname, results);
+			} finally {
+				lock.unlockReadWrite();
 			}
-			if (searchFlag == false) {
-				List<SearchResult> results = multipleIndex.exactSearch(queries);
-				lock.lockReadWrite();
-				try {
-					searchResult.put(key, results);
-				} finally {
-					lock.unlockReadWrite();
-				}
-			}
+
 		}
 	}
 
-	public void print(Path path) {
-		lock.lockReadOnly();
+	/**
+	 * Wrapper method to allow the driver to access the print Query method
+	 * 
+	 * @param path
+	 *            - the file location to print the results to
+	 */
+
+	@Override
+	public void printHelper(Path path) {
+		lock.lockReadWrite();
 		try {
-			QueryHelper.printQueryHelper(path, searchResult);
-
+			QueryHelper.printQuery(path, buildResult);
 		} finally {
-			lock.lockReadOnly();
+			lock.unlockReadWrite();
 		}
 	}
-
 }

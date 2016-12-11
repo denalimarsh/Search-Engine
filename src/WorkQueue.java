@@ -1,7 +1,7 @@
 import java.util.LinkedList;
 
 public class WorkQueue {
-
+	
     /**
      * Pool of worker threads that will wait in the background until work is
      * available.
@@ -54,23 +54,24 @@ public class WorkQueue {
      *            work request (in the form of a {@link Runnable} object)
      */
     public void execute(Runnable r) {
-        synchronized (queue) {
-        	increase();
+    	increase();
+    	synchronized (queue) {
             queue.addLast(r);
             queue.notifyAll();
         }
     }
 
-    public void finish() {
+    /**
+     * Finishes and terminates the queue.
+     */
+    public synchronized void finish() {
     	try {
-    		synchronized(queue){
-				while (pending > 0) {
-					queue.wait();
-				}
-    		}
+			while (pending > 0) {
+				this.wait();
+			}
 		}
 		catch (InterruptedException e) {
-		
+			System.out.println("");
 		}
 		
     }
@@ -99,18 +100,21 @@ public class WorkQueue {
     }
     
     
-	private void increase() {
-		synchronized(queue){
-			pending++;
-		}
+    /**
+     * Adds to the work queue.
+     */
+	private synchronized void increase() {
+		pending++;
 	}
 
-	private void decrease() {
-		synchronized(queue){
-			pending--;
-			if (pending <= 0) {
-				queue.notifyAll();
-			}
+	/**
+	 * Removes from the work queue.
+	 */
+	private synchronized void decrease() {
+		assert pending > 0;
+		pending--;
+		if (pending <= 0) {
+			this.notifyAll();
 		}
 	}
 	

@@ -1,104 +1,104 @@
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Driver {
 
 	/**
-	 * The main driver method which reads in the input arguments, instantiates
-	 * the main InvertedIndex data structure, and if appropriate, calls
-	 * traverse. If appropriate, calls parseQuery, exactSearch, and
-	 * partialSearch, and printHelper. If the multi flag is enabled, 
-	 * the InvertedIndex and its methods will execute as multithreaded.
+	 * Search engine. Builds an inverted index from input files and returns
+	 * search matches specified by the user.
 	 * 
 	 * @param args
-	 *            - the command line arguments which designate where the input
-	 *            and output paths are
+	 * @throws IOException
 	 */
 	public static void main(String[] args) {
 
-		ArgumentParser parser = new ArgumentParser(args);
-		InvertedIndex index;
-		InvertedIndexBuilder indexBuilder;
-		QueryHelper queryHelper;
-		WebCrawler crawler;
+		QueryHelperInterface query;
 		WorkQueue workers = null;
-		boolean searchFlag;
-		int port;
+		InvertedIndex index;
+		ArgumentParser parser = new ArgumentParser();
+		WebCrawlerInterface crawler;
+
+		parser.parseArguments(args);
 
 		if (parser.hasFlag("-multi") && parser.getValue("-multi") != null) {
-			int threadCount = 5;
+
+			int threads = 5;
 			try {
-				if (Integer.parseInt(parser.getValue("-multi")) != 0) {
-					threadCount = Integer.parseInt(parser.getValue("-multi"));
+				if (Integer.parseInt(parser.getValue("-multi")) > 0) {
+					threads = Integer.parseInt(parser.getValue("-multi"));
 				}
 			} catch (Exception e) {
-				System.out.println("Error occured while obtaining the number of threads");
+				System.out.println("Multi flag exception ");
 			}
+			workers = new WorkQueue(threads);
 			ThreadSafeInvertedIndex threadSafeIndex = new ThreadSafeInvertedIndex();
 			index = threadSafeIndex;
-			workers = new WorkQueue(threadCount);
+			query = new MultithreadedQueryHelper(threadSafeIndex, workers);
 			crawler = new MultithreadedWebCrawler(threadSafeIndex, workers);
-			indexBuilder = new MultithreadedInvertedIndexBuilder(threadSafeIndex, workers);
-			queryHelper = new MultithreadedQueryHelper(threadSafeIndex, workers);
-			
+
+			if (parser.hasFlag("-dir")) {
+				try {
+					Path input = Paths.get(parser.getValue("-dir"));
+					MultithreadedInvertedIndexBuilder.traverse(input, threadSafeIndex, workers);
+				} catch (Exception e) {
+					System.out.println("Bad directories");
+				}
+			}
 		} else {
-			indexBuilder = new InvertedIndexBuilder();
 			index = new InvertedIndex();
 			crawler = new WebCrawler(index);
-			queryHelper = new QueryHelper(index);
-		}
+			query = new QueryHelper(index);
 
-		if (parser.hasFlag("-dir")) {
-			if (parser.hasValue("-dir")) {
-				Path inputPath = Paths.get(parser.getValue("-dir"));
-				indexBuilder.traverse(inputPath, index);
-				if (workers != null) {
-					workers.finish();
+			if (parser.hasFlag("-dir")) {
+				try {
+					Path input = Paths.get(parser.getValue("-dir"));
+					InvertedIndexBuilder.traverse(input, index);
+				} catch (Exception e) {
+					System.out.println("Unable to parse directories.");
 				}
 			}
 		}
 
-		if (parser.hasFlag("-url")) {
-			String url = parser.getValue("-url");
-			crawler.crawl(url);
+		if (parser.hasFlag("-url") && parser.hasValue("-url")) {
+			String link = parser.getValue("-url");
+			crawler.crawl(link);
 		}
 
 		if (parser.hasFlag("-index")) {
-			Path output = Paths.get(parser.getValue("-index", "index.json"));
-			index.print(output);
+			String output = parser.getValue("-index", "index.json");
+			Path outputPath = Paths.get(output);
+			index.print(outputPath);
 		}
-		
-//		if (parser.hasFlag("-port")) {
-//			if((parser.hasValue("-port"))){
-//				port = Integer.parseInt(parser.getValue("-port"));
-//			}else{
-//				port = 8080;
-//			}
-//			MainServer server = new MainServer(index, port);
-//			server.startServer();
-//		}
-		
-		
 
-		if (parser.hasFlag("-query")) {
-			if (parser.hasValue("-query")) {
-				searchFlag = true;
-				Path queryPath = Paths.get(parser.getValue("-query"));
-				queryHelper.parseQuery(queryPath, searchFlag, index);
+		if (parser.hasFlag("-exact") && parser.hasValue("-exact")) {
+			String inputQuery = parser.getValue("-exact");
+			Path inputQueryPath = Paths.get(inputQuery);
+			try {
+				query.parseQueryFile(inputQueryPath, true);
+			} catch (IOException e) {
+				System.out.println("Unable to parse file.");
 			}
 		}
 
-		if (parser.hasFlag("-exact")) {
-			if (parser.hasValue("-exact")) {
-				searchFlag = false;
-				Path exactPath = Paths.get(parser.getValue("-exact"));
-				queryHelper.parseQuery(exactPath, searchFlag, index);
+		if (parser.hasFlag("-query") && parser.hasValue("-query")) {
+			String inputQuery = parser.getValue("-query");
+			Path inputQueryPath = Paths.get(inputQuery);
+			try {
+				query.parseQueryFile(inputQueryPath, false);
+			} catch (IOException e) {
+				System.out.println("Unable to parse file.");
 			}
 		}
 
 		if (parser.hasFlag("-results")) {
-			Path results = Paths.get(parser.getValue("-results", "results.json"));
-			queryHelper.printHelper(results);
+			String outputQuery = parser.getValue("-results", "results.json");
+			Path outputQueryPath = Paths.get(outputQuery);
+			query.printHelper(outputQueryPath);
+		}
+
+		if (workers != null) {
+			workers.shutdown();
 		}
 	}
 }
