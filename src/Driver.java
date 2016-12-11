@@ -7,8 +7,8 @@ public class Driver {
 	 * The main driver method which reads in the input arguments, instantiates
 	 * the main InvertedIndex data structure, and if appropriate, calls
 	 * traverse. If appropriate, calls parseQuery, exactSearch, and
-	 * partialSearch, and printHelper. If the multi flag is enabled, the
-	 * InvertedIndex and its methods will execute as multithreaded.
+	 * partialSearch, and printHelper. If the multi flag is enabled, 
+	 * the InvertedIndex and its methods will execute as multithreaded.
 	 * 
 	 * @param args
 	 *            - the command line arguments which designate where the input
@@ -27,19 +27,19 @@ public class Driver {
 		if (parser.hasFlag("-multi") && parser.getValue("-multi") != null) {
 			int threadCount = 5;
 			try {
-				if (Integer.parseInt(parser.getValue("-multi")) > 0) {
+				if (Integer.parseInt(parser.getValue("-multi")) != 0) {
 					threadCount = Integer.parseInt(parser.getValue("-multi"));
 				}
 			} catch (Exception e) {
 				System.out.println("Error occured while obtaining the number of threads");
 			}
-			workers = new WorkQueue(threadCount);
 			ThreadSafeInvertedIndex threadSafeIndex = new ThreadSafeInvertedIndex();
 			index = threadSafeIndex;
+			workers = new WorkQueue(threadCount);
 			crawler = new MultithreadedWebCrawler(threadSafeIndex, workers);
 			indexBuilder = new MultithreadedInvertedIndexBuilder(threadSafeIndex, workers);
 			queryHelper = new MultithreadedQueryHelper(threadSafeIndex, workers);
-
+			
 		} else {
 			indexBuilder = new InvertedIndexBuilder();
 			index = new InvertedIndex();
@@ -59,7 +59,7 @@ public class Driver {
 
 		if (parser.hasFlag("-url")) {
 			String url = parser.getValue("-url");
-			crawler.crawlHelper(url);
+			crawler.crawl(url);
 		}
 
 		if (parser.hasFlag("-index")) {

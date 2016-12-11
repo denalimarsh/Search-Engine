@@ -116,20 +116,4 @@ public class WebCrawler {
 		return finished;
 
 	}
-
-	/**
-	 * Adds the seed to the queue and removes existing links from the set and
-	 * queue.
-	 * 
-	 * @param url
-	 */
-	public void crawlHelper(String url) {
-		if (!duplicateSet.contains(url) && duplicateSet.size() < MAX_LINKS) {
-			duplicateSet.add(url);
-			crawlQueue.add(url);
-		}
-		while (!crawlQueue.isEmpty()) {
-			crawl(crawlQueue.remove());
-		}
-	}
 }

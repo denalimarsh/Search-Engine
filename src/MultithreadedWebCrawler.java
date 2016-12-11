@@ -3,71 +3,67 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-public class MultithreadedWebCrawler extends WebCrawler{
+public class MultithreadedWebCrawler extends WebCrawler {
 
-	private final ThreadSafeInvertedIndex multiIndex;
-	private final HashSet<String> urlset;
+	private final ThreadSafeInvertedIndex multipleIndex;
+	private final HashSet<String> linkSet;
 	private final WorkQueue workers;
-	private int limit = 50;
-	
-	public MultithreadedWebCrawler(ThreadSafeInvertedIndex index,  WorkQueue workers) {
+	private int MAX_LINKS = 50;
+
+	public MultithreadedWebCrawler(ThreadSafeInvertedIndex index, WorkQueue workers) {
 		super(index);
-		multiIndex = index;
-		this.urlset = new HashSet<String>();
+		multipleIndex = index;
+		this.linkSet = new HashSet<String>();
 		this.workers = workers;
 	}
-	
-	private class CrawlRun implements Runnable {
+
+	@SuppressWarnings("unused")
+	private class CrawlRunner implements Runnable {
 		private String url;
 		private InvertedIndex localindex;
 
-		public CrawlRun(String url) {
+		public CrawlRunner(String url) {
 			this.url = url;
 			this.localindex = new InvertedIndex();
 		}
-		
+
 		@Override
 		public void run() {
+
 			String html;
+			URL base;
+
 			try {
-				URL base = new URL(url);
 				html = HTMLCleaner.fetchHTML(url);
-				ArrayList<String> urls = LinkParser.listLinks(html);
-				
-				for(String temp : urls){
-					URL absolute = new URL(base, temp);
-					URL cleaned = new URL(absolute.getProtocol(), absolute.getHost(), absolute.getFile());
-					String absoluteURL = cleaned.toString();
-					
-					if (urlset.size() > limit) {
+				base = new URL(url);
+				ArrayList<String> links = LinkParser.listLinks(html);
+
+				for (int i = 0; i < links.size(); i++) {
+					URL absolute = new URL(base, links.get(i));
+					URL finished = new URL(absolute.getProtocol(), absolute.getHost(), absolute.getFile());
+					String absoluteURL = finished.toString();
+
+					if (linkSet.size() > MAX_LINKS) {
 						break;
-					}else if (!urlset.contains(absoluteURL) && urlset.size() < limit) {
-						urlset.add(absoluteURL);
-						workers.execute(new CrawlRun(absoluteURL));
+					}
+
+					if (!linkSet.contains(absoluteURL)) {
+						linkSet.add(absoluteURL);
+						workers.execute(new CrawlRunner(absoluteURL));
 					}
 				}
 
 				html = HTMLCleaner.cleanHTML(html);
 				String[] results = HTMLCleaner.parseWords(html);
-				
-				int count = 1;
-				
-				for(String result: results){
-					localindex.add(result, url, count);
-					count++;
+
+				for (int i = 0; i < results.length; i++) {
+					localindex.add(results[i], url, i + 1);
 				}
-				multiIndex.addIndex(localindex);
+
+				multipleIndex.addIndex(localindex);
 			} catch (IOException e) {
-				System.out.println("Cannot get url: " + url);
+				System.out.println("Error accessing link: " + url);
 			}
 		}
-	}
-	
-	public void crawlHelper(String url){
-		if(!urlset.contains(url) && urlset.size() < limit){
-			urlset.add(url);
-			workers.execute(new CrawlRun(url));
-		}
-		workers.finish();
 	}
 }

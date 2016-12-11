@@ -11,15 +11,15 @@ public class MultithreadedQueryHelper extends QueryHelper {
 
 	private final TreeMap<String, List<SearchResult>> searchResult;
 	private final ThreadSafeInvertedIndex multipleIndex;
-	private final WorkQueue workers;
 	private ReadWriteLock lock;
+	private final WorkQueue workers;
 
 	public MultithreadedQueryHelper(ThreadSafeInvertedIndex index, WorkQueue workers) {
 		super(index);
 		searchResult = new TreeMap<String, List<SearchResult>>();
 		multipleIndex = index;
-		this.workers = workers;
 		lock = new ReadWriteLock();
+		this.workers = workers;
 	}
 
 	public void parseQuery(Path file, boolean searchFlag) throws IOException {
@@ -56,17 +56,33 @@ public class MultithreadedQueryHelper extends QueryHelper {
 		public void run() {
 			if (searchFlag == true) {
 				List<SearchResult> results = multipleIndex.partialSearch(queries);
-				searchResult.put(key, results);	
+				lock.lockReadWrite();
+				try {
+					searchResult.put(key, results);
+				} finally {
+					lock.unlockReadWrite();
+				}
 			}
 			if (searchFlag == false) {
 				List<SearchResult> results = multipleIndex.exactSearch(queries);
-				searchResult.put(key, results);
+				lock.lockReadWrite();
+				try {
+					searchResult.put(key, results);
+				} finally {
+					lock.unlockReadWrite();
+				}
 			}
 		}
 	}
 
 	public void print(Path path) {
-		QueryHelper.printQueryHelper(path, searchResult);
+		lock.lockReadOnly();
+		try {
+			QueryHelper.printQueryHelper(path, searchResult);
+
+		} finally {
+			lock.lockReadOnly();
+		}
 	}
 
 }
