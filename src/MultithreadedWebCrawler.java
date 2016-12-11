@@ -17,7 +17,6 @@ public class MultithreadedWebCrawler extends WebCrawler {
 		this.workers = workers;
 	}
 
-	@SuppressWarnings("unused")
 	private class CrawlRunner implements Runnable {
 		private String url;
 		private InvertedIndex localindex;
@@ -43,7 +42,7 @@ public class MultithreadedWebCrawler extends WebCrawler {
 					URL finished = new URL(absolute.getProtocol(), absolute.getHost(), absolute.getFile());
 					String absoluteURL = finished.toString();
 
-					if (linkSet.size() > MAX_LINKS) {
+					if (linkSet.size() == MAX_LINKS) {
 						break;
 					}
 
@@ -65,5 +64,14 @@ public class MultithreadedWebCrawler extends WebCrawler {
 				System.out.println("Error accessing link: " + url);
 			}
 		}
+	}
+	
+	@Override
+	public void crawl(String url){
+		if(!linkSet.contains(url) && linkSet.size() < MAX_LINKS){
+			linkSet.add(url);
+			workers.execute(new CrawlRunner(url));
+		}
+		workers.finish();
 	}
 }
