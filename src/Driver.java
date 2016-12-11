@@ -68,15 +68,15 @@ public class Driver {
 			index.print(output);
 		}
 		
-		if (parser.hasFlag("-port")) {
-			if((parser.hasValue("-port"))){
-				port = Integer.parseInt(parser.getValue("-port"));
-			}else{
-				port = 8080;
-			}
-			MainServer server = new MainServer(index, port);
-			server.startServer();
-		}
+//		if (parser.hasFlag("-port")) {
+//			if((parser.hasValue("-port"))){
+//				port = Integer.parseInt(parser.getValue("-port"));
+//			}else{
+//				port = 8080;
+//			}
+//			MainServer server = new MainServer(index, port);
+//			server.startServer();
+//		}
 		
 		
 
