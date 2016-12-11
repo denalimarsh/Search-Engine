@@ -23,6 +23,7 @@ public class Driver {
 		WebCrawler crawler;
 		WorkQueue workers = null;
 		boolean searchFlag;
+		int port;
 
 		if (parser.hasFlag("-multi") && parser.getValue("-multi") != null) {
 			int threadCount = 5;
@@ -66,6 +67,18 @@ public class Driver {
 			Path output = Paths.get(parser.getValue("-index", "index.json"));
 			index.print(output);
 		}
+		
+		if (parser.hasFlag("-port")) {
+			if((parser.hasValue("-port"))){
+				port = Integer.parseInt(parser.getValue("-port"));
+			}else{
+				port = 8080;
+			}
+			MainServer server = new MainServer(index, port);
+			server.startServer();
+		}
+		
+		
 
 		if (parser.hasFlag("-query")) {
 			if (parser.hasValue("-query")) {

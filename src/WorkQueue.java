@@ -107,7 +107,6 @@ public class WorkQueue {
 
 	private void decrease() {
 		synchronized(queue){
-			assert pending > 0;
 			pending--;
 			if (pending <= 0) {
 				queue.notifyAll();
