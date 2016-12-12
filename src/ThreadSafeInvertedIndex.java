@@ -1,26 +1,26 @@
 import java.util.List;
 import java.nio.file.Path;
 
-public class ThreadSafeInvertedIndex extends InvertedIndex{
-	
+public class ThreadSafeInvertedIndex extends InvertedIndex {
+
 	private ReadWriteLock lock;
 
 	public ThreadSafeInvertedIndex() {
 		super();
 		this.lock = new ReadWriteLock();
 	}
-	
+
 	@Override
-	public void add(String word, String text, int position) {
+	public void add(String word, String line, int position) {
 		lock.lockReadWrite();
 		try {
-			super.add(word, text, position);
+			super.add(word, line, position);
 
 		} finally {
 			lock.unlockReadWrite();
 		}
 	}
-	
+
 	@Override
 	public void print(Path path) {
 		lock.lockReadOnly();
@@ -31,7 +31,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex{
 			lock.unlockReadOnly();
 		}
 	}
-	
+
 	@Override
 	public boolean containsWord(String word) {
 		lock.lockReadOnly();
@@ -42,7 +42,7 @@ public class ThreadSafeInvertedIndex extends InvertedIndex{
 			lock.unlockReadOnly();
 		}
 	}
-	
+
 	@Override
 	public int size() {
 		lock.lockReadOnly();
@@ -53,32 +53,31 @@ public class ThreadSafeInvertedIndex extends InvertedIndex{
 			lock.unlockReadOnly();
 		}
 	}
-	
-	
+
 	@Override
-	public List<SearchResult> partialSearch(String[] querywords)  {
+	public List<SearchResult> partialSearch(String[] words) {
 		lock.lockReadOnly();
 		try {
-			return super.partialSearch(querywords);
+			return super.partialSearch(words);
 
 		} finally {
 			lock.unlockReadOnly();
 		}
 	}
-	
+
 	@Override
-	public List<SearchResult> exactSearch(String[] querywords)  {
+	public List<SearchResult> exactSearch(String[] words) {
 		lock.lockReadOnly();
 		try {
-			return super.exactSearch(querywords);
+			return super.exactSearch(words);
 
 		} finally {
 			lock.unlockReadOnly();
 		}
 	}
-	
+
 	@Override
-	public String toString()  {
+	public String toString() {
 		lock.lockReadOnly();
 		try {
 			return super.toString();
@@ -87,16 +86,16 @@ public class ThreadSafeInvertedIndex extends InvertedIndex{
 			lock.unlockReadOnly();
 		}
 	}
-	
+
 	@Override
-	public void addIndex(InvertedIndex partialindex)  {
+	public void addIndex(InvertedIndex partialIndex) {
 		lock.lockReadWrite();
 		try {
-			super.addIndex(partialindex);
+			super.addIndex(partialIndex);
 
 		} finally {
 			lock.unlockReadWrite();
 		}
 	}
-	
+
 }

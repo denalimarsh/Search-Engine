@@ -23,7 +23,11 @@ public class WebCrawler implements WebCrawlerInterface {
 	 * Adds the seed to the queue and removes existing url's from the set and
 	 * queue.
 	 * 
+	 * Adds the original link to the linkQueue and while the queue isn't empty
+	 * calls callOneLink on the last object in the queue
+	 * 
 	 * @param link
+	 *            - the original url to be crawled
 	 */
 	public void crawl(String link) {
 		if (!duplicateSet.contains(link) && duplicateSet.size() < MAX_LINKS) {
