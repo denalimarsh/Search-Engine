@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
 
-public class QueryHelper implements QueryHelperInterface{
+public class QueryHelper implements QueryHelperInterface {
 
 	private final TreeMap<String, List<SearchResult>> buildResult;
 	private final InvertedIndex index;
@@ -20,8 +20,7 @@ public class QueryHelper implements QueryHelperInterface{
 		buildResult = new TreeMap<String, List<SearchResult>>();
 		this.index = input;
 	}
-	
-	
+
 	/**
 	 * Reads a text file, cleans the words, adds them to a list
 	 * 
@@ -29,7 +28,7 @@ public class QueryHelper implements QueryHelperInterface{
 	 *            - the path to be read and parsed into queries
 	 * @return uniqueList - a sorted, unique list of Strings
 	 */
-	public void parseQuery(Path file, boolean searchFlag){
+	public void parseQuery(Path file, boolean searchFlag) {
 
 		try (BufferedReader reader = Files.newBufferedReader(file, Charset.forName("UTF-8"));) {
 
@@ -41,8 +40,7 @@ public class QueryHelper implements QueryHelperInterface{
 				if (searchFlag) {
 					List<SearchResult> results = index.exactSearch(words);
 					buildResult.put(searchname, results);
-				}
-				else if (!searchFlag) {
+				} else if (!searchFlag) {
 					List<SearchResult> results = index.partialSearch(words);
 					buildResult.put(searchname, results);
 				}
@@ -55,7 +53,7 @@ public class QueryHelper implements QueryHelperInterface{
 		}
 
 	}
-	
+
 	/**
 	 * Prints the fully populated buildQuery to the out path
 	 * 
@@ -101,7 +99,7 @@ public class QueryHelper implements QueryHelperInterface{
 			System.err.println("Could not print to: " + path.toString());
 		}
 	}
-	
+
 	/**
 	 * Wrapper method to allow the driver to access the print Query method
 	 * 
@@ -111,7 +109,7 @@ public class QueryHelper implements QueryHelperInterface{
 	public void printHelper(Path path) {
 		QueryHelper.printQuery(path, buildResult);
 	}
-	
+
 	/**
 	 * Adds quotes to any string, useful in pretty printing JSON
 	 * 

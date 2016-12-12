@@ -1,15 +1,18 @@
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Driver {
 
 	/**
-	 * Search engine. Builds an inverted index from input files and returns
-	 * search matches specified by the user.
+	 * The main driver method which reads in the input arguments, instantiates
+	 * the main InvertedIndex data structure, and if appropriate, calls
+	 * traverse. If appropriate, calls parseQuery, exactSearch, and
+	 * partialSearch, and printHelper. If the multi flag is enabled, 
+	 * the InvertedIndex and its methods will execute as multithreaded.
 	 * 
 	 * @param args
-	 * @throws IOException
+	 *            - the command line arguments which designate where the input
+	 *            and output paths are
 	 */
 	public static void main(String[] args) {
 
@@ -27,7 +30,7 @@ public class Driver {
 					threadCount = Integer.parseInt(parser.getValue("-multi"));
 				}
 			} catch (Exception e) {
-				System.out.println("Multi flag exception ");
+				System.out.println("Error with multithread argument");
 			}
 			workers = new WorkQueue(threadCount);
 			ThreadSafeInvertedIndex threadSafeIndex = new ThreadSafeInvertedIndex();
@@ -40,7 +43,7 @@ public class Driver {
 					Path input = Paths.get(parser.getValue("-dir"));
 					MultithreadedInvertedIndexBuilder.traverse(input, threadSafeIndex, workers);
 				} catch (Exception e) {
-					System.out.println("Bad directories");
+					System.out.println("Error with directory argument");
 				}
 			}
 		} else {
@@ -53,7 +56,7 @@ public class Driver {
 					Path input = Paths.get(parser.getValue("-dir"));
 					InvertedIndexBuilder.traverse(input, index);
 				} catch (Exception e) {
-					System.out.println("Unable to parse directories.");
+					System.out.println("Error with directory argument");
 				}
 			}
 		}
