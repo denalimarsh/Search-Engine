@@ -21,10 +21,9 @@ public class Driver {
 		parser.parseArguments(args);
 
 		if (parser.hasFlag("-multi") && parser.getValue("-multi") != null) {
-
 			int threadCount = 5;
 			try {
-				if (Integer.parseInt(parser.getValue("-multi")) > 0) {
+				if (Integer.parseInt(parser.getValue("-multi")) != 0) {
 					threadCount = Integer.parseInt(parser.getValue("-multi"));
 				}
 			} catch (Exception e) {
@@ -73,21 +72,13 @@ public class Driver {
 		if (parser.hasFlag("-exact") && parser.hasValue("-exact")) {
 			String inputQuery = parser.getValue("-exact");
 			Path inputQueryPath = Paths.get(inputQuery);
-			try {
-				query.parseQuery(inputQueryPath, true);
-			} catch (IOException e) {
-				System.out.println("Unable to parse file.");
-			}
+			query.parseQuery(inputQueryPath, true);
 		}
 
 		if (parser.hasFlag("-query") && parser.hasValue("-query")) {
 			String inputQuery = parser.getValue("-query");
 			Path inputQueryPath = Paths.get(inputQuery);
-			try {
-				query.parseQuery(inputQueryPath, false);
-			} catch (IOException e) {
-				System.out.println("Unable to parse file.");
-			}
+			query.parseQuery(inputQueryPath, false);
 		}
 
 		if (parser.hasFlag("-results")) {

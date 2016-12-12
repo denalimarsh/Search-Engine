@@ -13,26 +13,43 @@ public class MultithreadedQueryHelper implements QueryHelperInterface {
 	private final ThreadSafeInvertedIndex multipleIndex;
 	private final WorkQueue workers;
 
+	/**
+	 * Builds a map that holds words parsed from the query file
+	 * 
+	 * @param index
+	 *            - the inverted index passed to the queryHelper
+	 * @param workers
+	 *            - the work queue
+	 */
 	public MultithreadedQueryHelper(ThreadSafeInvertedIndex index, WorkQueue workers) {
 		this.workers = workers;
 		buildResult = new TreeMap<String, List<SearchResult>>();
 		multipleIndex = index;
 	}
-	
-	public void parseQuery(Path file, boolean searchFlag) throws IOException {
+
+	/**
+	 * Parses the query file, passing each line of the file to a new worker in
+	 * the work queue which then processes and sorts the words before performing
+	 * an exact or partial search.
+	 * 
+	 * @param file
+	 *            - the location path of the query
+	 * 
+	 * @param searchFlag
+	 *            - the flag that determines whether the search is partial or
+	 *            exact
+	 */
+	public void parseQuery(Path file, boolean searchFlag) {
 		try (BufferedReader reader = Files.newBufferedReader(file, Charset.forName("UTF-8"));) {
-
 			String line;
-
 			while ((line = reader.readLine()) != null) {
 				workers.execute(new QueryRunner(line, searchFlag));
 			}
-
 			workers.finish();
 			reader.close();
 
 		} catch (IOException e) {
-			System.out.println("Unable to read query file.");
+			System.out.println("An error occuring while trying to parse the query");
 		}
 
 	}
@@ -53,9 +70,13 @@ public class MultithreadedQueryHelper implements QueryHelperInterface {
 			String[] words = line.trim().replaceAll("\\p{Punct}+", "").toLowerCase().split("\\s+");
 			Arrays.sort(words);
 			String word = String.join(" ", words);
-			List<SearchResult> results = (flag) ? multipleIndex.exactSearch(words) : multipleIndex.partialSearch(words);
-
-			buildResult.put(word, results);
+			if (flag) {
+				List<SearchResult> results = multipleIndex.exactSearch(words);
+				buildResult.put(word, results);
+			} else if (!flag) {
+				List<SearchResult> results = multipleIndex.partialSearch(words);
+				buildResult.put(word, results);
+			}
 		}
 	}
 

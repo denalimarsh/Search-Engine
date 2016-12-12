@@ -54,10 +54,10 @@ public class WorkQueue {
      * @param r
      *            work request (in the form of a {@link Runnable} object)
      */
-    public void execute(Runnable r) {
+    public void execute(Runnable runner) {
     	increase();
     	synchronized (queue) {
-            queue.addLast(r);
+            queue.addLast(runner);
             queue.notifyAll();
         }
     }
@@ -118,17 +118,16 @@ public class WorkQueue {
 	
 
     /**
-     * Waits until work is available in the work queue. When work is found, will
-     * remove the work from the queue and run it. If a shutdown is detected,
-     * will exit instead of grabbing new work from the queue. These threads will
-     * continue running in the background until a shutdown is requested.
+     * When work is available in the work queue, it will remove the work and run it. 
+     * If a shutdown is detected, will exit immediately. Threads will run in background
+     * until a shutdown is requested.
      */
     private class PoolWorker extends Thread {
 
         @Override
         public void run() {
         	
-            Runnable r = null;
+            Runnable runner = null;
 
             while (true) {
                 synchronized (queue) {
@@ -137,7 +136,7 @@ public class WorkQueue {
                             queue.wait();
                         }
                         catch (InterruptedException ex) {
-                            System.err.println("Warning: Work queue interrupted.");
+                            System.err.println("The work queue was interrupted.");
                             Thread.currentThread().interrupt();
                         }
                     }
@@ -146,15 +145,15 @@ public class WorkQueue {
                         break;
                     }
                     else {
-                        r = queue.removeFirst();
+                    	runner = queue.removeFirst();
                     }
                 }
 
                 try {
-                    r.run();
+                	runner.run();
                 }
                 catch (RuntimeException ex) {
-                    System.err.println("Warning: Work queue encountered an "
+                    System.err.println("The work queue encountered an "
                             + "exception while running.");
                 }finally{
                 	decrease();

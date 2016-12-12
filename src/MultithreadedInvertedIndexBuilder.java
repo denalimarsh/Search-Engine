@@ -3,21 +3,35 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class MultithreadedInvertedIndexBuilder{
+public class MultithreadedInvertedIndexBuilder {
 
-	public static void traverse(Path directory, ThreadSafeInvertedIndex index, WorkQueue workers) throws IOException {
-		try (DirectoryStream<Path> listing = Files.newDirectoryStream(directory)) {
+	/**
+	 * 
+	 * Recursively searches the input directory for other directories and files,
+	 * which are parsed by different threads using multithreading
+	 * 
+	 * @param originalPath
+	 *            the original directory to be searched
+	 * @param index
+	 *            the global inverted index
+	 * @param workers
+	 *            the work queue
+	 */
+	public static void traverse(Path originalPath, ThreadSafeInvertedIndex index, WorkQueue workers) {
+		try (DirectoryStream<Path> listing = Files.newDirectoryStream(originalPath)) {
 			for (Path file : listing) {
-				if (Files.isRegularFile(file) && file.getFileName().toString().toLowerCase().endsWith(".txt")) {
+				if (file.getFileName().toString().toLowerCase().endsWith(".txt")) {
 					workers.execute(new BuildRunner(file, index));
 				} else if (Files.isDirectory(file)) {
 					traverse(file, index, workers);
 				}
 			}
+		} catch (IOException e) {
+			System.out.println("Unable to access " + originalPath.toString() + " to parse.");
 		}
 		workers.finish();
 	}
-	
+
 	private static class BuildRunner implements Runnable {
 
 		private ThreadSafeInvertedIndex global;
@@ -29,7 +43,7 @@ public class MultithreadedInvertedIndexBuilder{
 			this.global = index;
 			local = new InvertedIndex();
 		}
-		
+
 		@Override
 		public void run() {
 			InvertedIndexBuilder.parseFile(this.file, local);

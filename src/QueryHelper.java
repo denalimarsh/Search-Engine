@@ -13,12 +13,23 @@ public class QueryHelper implements QueryHelperInterface{
 	private final TreeMap<String, List<SearchResult>> buildResult;
 	private final InvertedIndex index;
 
+	/**
+	 * Initializes a new QueryHelper object
+	 */
 	public QueryHelper(InvertedIndex input) {
 		buildResult = new TreeMap<String, List<SearchResult>>();
 		this.index = input;
 	}
-
-	public void parseQuery(Path file, boolean searchFlag) throws IOException {
+	
+	
+	/**
+	 * Reads a text file, cleans the words, adds them to a list
+	 * 
+	 * @param path
+	 *            - the path to be read and parsed into queries
+	 * @return uniqueList - a sorted, unique list of Strings
+	 */
+	public void parseQuery(Path file, boolean searchFlag){
 
 		try (BufferedReader reader = Files.newBufferedReader(file, Charset.forName("UTF-8"));) {
 
@@ -45,6 +56,14 @@ public class QueryHelper implements QueryHelperInterface{
 
 	}
 	
+	/**
+	 * Prints the fully populated buildQuery to the out path
+	 * 
+	 * @param path
+	 *            - the file location to print the results to
+	 * @param finishedBuildQuery
+	 *            - the data structure containing the results to be printed
+	 */
 	public static void printQuery(Path path, TreeMap<String, List<SearchResult>> finishedBuildQuery) {
 		try (BufferedWriter writer = Files.newBufferedWriter(path);) {
 			writer.write("{\n");

@@ -30,10 +30,21 @@ public class WebCrawler implements WebCrawlerInterface{
 			linkQueue.add(url);
 		}
 		while(!linkQueue.isEmpty()){
-			crawlHelper(linkQueue.remove());
+			crawlOneLink(linkQueue.remove());
 		}
 	}
 	
+	/**
+	 * Gets and cleans HTML from a link and it's associated html,
+	 * adding it into the inverted index
+	 * 
+	 * @param link
+	 *            - the url associated with the html block
+	 * @param html
+	 *            - the html from the link
+	 * @param index
+	 *            - inverted index to be added to 
+	 */
 	public static void polishHTML(String link, String html, InvertedIndex index){
 		html = HTMLCleaner.cleanHTML(html);
 		String[] parsedHTML = HTMLCleaner.parseWords(html);
@@ -44,7 +55,13 @@ public class WebCrawler implements WebCrawlerInterface{
 		
 	}
 	
-	private void crawlHelper(String link){
+	/**
+	 * Crawls a url for other links on the page, adding them
+	 * to the queue and stops after the 50 links have been processed
+	 * 
+	 * @param link
+	 */
+	private void crawlOneLink(String link){
 		String html;
 		try{
 			URL baseLink = new URL(link);
