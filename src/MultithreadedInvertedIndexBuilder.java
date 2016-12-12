@@ -17,7 +17,8 @@ public class MultithreadedInvertedIndexBuilder {
 	 * @param workers
 	 *            the work queue
 	 */
-	public static void traverse(Path originalPath, ThreadSafeInvertedIndex index, WorkQueue workers) {
+	public static void traverse(Path originalPath, ThreadSafeInvertedIndex index, WorkQueue workers)
+			throws IOException {
 		try (DirectoryStream<Path> listing = Files.newDirectoryStream(originalPath)) {
 			for (Path file : listing) {
 				if (file.getFileName().toString().toLowerCase().endsWith(".txt")) {
@@ -26,8 +27,6 @@ public class MultithreadedInvertedIndexBuilder {
 					traverse(file, index, workers);
 				}
 			}
-		} catch (IOException e) {
-			System.out.println("Unable to access " + originalPath.toString() + " to parse.");
 		}
 		workers.finish();
 	}

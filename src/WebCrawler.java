@@ -12,6 +12,11 @@ public class WebCrawler implements WebCrawlerInterface {
 	private final Queue<String> linkQueue;
 	private int MAX_LINKS;
 
+	/**
+	 * Instantiates a new WebCrawler
+	 * 
+	 * @param index
+	 */
 	public WebCrawler(InvertedIndex index) {
 		this.duplicateSet = new HashSet<String>();
 		this.linkQueue = new LinkedList<String>();
@@ -53,9 +58,11 @@ public class WebCrawler implements WebCrawlerInterface {
 	public static void polishHTML(String link, String html, InvertedIndex index) {
 		html = HTMLCleaner.cleanHTML(html);
 		String[] parsedHTML = HTMLCleaner.parseWords(html);
+
 		for (int i = 0; i < parsedHTML.length; i++) {
 			index.add(parsedHTML[i], link, i + 1);
 		}
+
 	}
 
 	/**
@@ -88,7 +95,7 @@ public class WebCrawler implements WebCrawlerInterface {
 			polishHTML(link, html, index);
 
 		} catch (IOException e) {
-			System.out.println("Error occured while crawling link");
+			System.out.println("Error occured while crawling url");
 		}
 	}
 

@@ -21,6 +21,7 @@ public class MultithreadedQueryHelper implements QueryHelperInterface {
 	 * @param workers
 	 *            - the work queue
 	 */
+
 	public MultithreadedQueryHelper(ThreadSafeInvertedIndex index, WorkQueue workers) {
 		this.workers = workers;
 		buildResult = new TreeMap<String, List<SearchResult>>();
@@ -39,6 +40,7 @@ public class MultithreadedQueryHelper implements QueryHelperInterface {
 	 *            - the flag that determines whether the search is partial or
 	 *            exact
 	 */
+
 	public void parseQuery(Path file, boolean searchFlag) {
 		try (BufferedReader reader = Files.newBufferedReader(file, Charset.forName("UTF-8"));) {
 			String line;
@@ -47,11 +49,9 @@ public class MultithreadedQueryHelper implements QueryHelperInterface {
 			}
 			workers.finish();
 			reader.close();
-
 		} catch (IOException e) {
-			System.out.println("An error occuring while trying to parse the query");
+			System.out.println("Unable to read query file.");
 		}
-
 	}
 
 	private class QueryRunner implements Runnable {
@@ -72,10 +72,14 @@ public class MultithreadedQueryHelper implements QueryHelperInterface {
 			String word = String.join(" ", words);
 			if (flag) {
 				List<SearchResult> results = multipleIndex.exactSearch(words);
-				buildResult.put(word, results);
+				synchronized (buildResult) {
+					buildResult.put(word, results);
+				}
 			} else if (!flag) {
 				List<SearchResult> results = multipleIndex.partialSearch(words);
-				buildResult.put(word, results);
+				synchronized (buildResult) {
+					buildResult.put(word, results);
+				}
 			}
 		}
 	}

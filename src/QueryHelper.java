@@ -49,7 +49,7 @@ public class QueryHelper implements QueryHelperInterface {
 			reader.close();
 
 		} catch (IOException e) {
-			System.out.println("Unable to read query file.");
+			System.out.println("Unable to read query file");
 		}
 
 	}

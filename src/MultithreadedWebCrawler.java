@@ -20,6 +20,7 @@ public class MultithreadedWebCrawler implements WebCrawlerInterface {
 	 * @param workers
 	 *            - the WorkQueue
 	 */
+
 	public MultithreadedWebCrawler(ThreadSafeInvertedIndex index, WorkQueue workers) {
 		multiIndex = index;
 		this.duplicateSet = new HashSet<String>();
@@ -33,6 +34,7 @@ public class MultithreadedWebCrawler implements WebCrawlerInterface {
 	 * @param link
 	 *            - the original url to be crawled
 	 */
+
 	public void crawl(String link) {
 		synchronized (duplicateSet) {
 			if (!duplicateSet.contains(link) && duplicateSet.size() < MAX_LINKS) {
@@ -44,7 +46,6 @@ public class MultithreadedWebCrawler implements WebCrawlerInterface {
 	}
 
 	private class CrawlRunner implements Runnable {
-
 		private String link;
 		private InvertedIndex localindex;
 
@@ -69,8 +70,10 @@ public class MultithreadedWebCrawler implements WebCrawlerInterface {
 					if (duplicateSet.size() >= MAX_LINKS) {
 						break;
 					} else if (!duplicateSet.contains(finishedURL)) {
-						duplicateSet.add(finishedURL);
-						workers.execute(new CrawlRunner(finishedURL));
+						synchronized (duplicateSet) {
+							duplicateSet.add(finishedURL);
+							workers.execute(new CrawlRunner(finishedURL));
+						}
 					}
 				}
 
@@ -81,4 +84,5 @@ public class MultithreadedWebCrawler implements WebCrawlerInterface {
 			}
 		}
 	}
+
 }
