@@ -31,7 +31,6 @@ public class QueryHelper implements QueryHelperInterface{
 					List<SearchResult> results = index.exactSearch(words);
 					buildResult.put(searchname, results);
 				}
-
 				else if (!searchFlag) {
 					List<SearchResult> results = index.partialSearch(words);
 					buildResult.put(searchname, results);

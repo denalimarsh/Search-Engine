@@ -13,25 +13,24 @@ public class Driver {
 	 */
 	public static void main(String[] args) {
 
-		QueryHelperInterface query;
 		WorkQueue workers = null;
 		InvertedIndex index;
 		ArgumentParser parser = new ArgumentParser();
+		QueryHelperInterface query;
 		WebCrawlerInterface crawler;
-
 		parser.parseArguments(args);
 
 		if (parser.hasFlag("-multi") && parser.getValue("-multi") != null) {
 
-			int threads = 5;
+			int threadCount = 5;
 			try {
 				if (Integer.parseInt(parser.getValue("-multi")) > 0) {
-					threads = Integer.parseInt(parser.getValue("-multi"));
+					threadCount = Integer.parseInt(parser.getValue("-multi"));
 				}
 			} catch (Exception e) {
 				System.out.println("Multi flag exception ");
 			}
-			workers = new WorkQueue(threads);
+			workers = new WorkQueue(threadCount);
 			ThreadSafeInvertedIndex threadSafeIndex = new ThreadSafeInvertedIndex();
 			index = threadSafeIndex;
 			query = new MultithreadedQueryHelper(threadSafeIndex, workers);

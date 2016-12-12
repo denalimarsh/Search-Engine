@@ -12,13 +12,11 @@ public class MultithreadedQueryHelper implements QueryHelperInterface {
 	private final TreeMap<String, List<SearchResult>> buildResult;
 	private final ThreadSafeInvertedIndex multipleIndex;
 	private final WorkQueue workers;
-	private final ReadWriteLock lock;
 
 	public MultithreadedQueryHelper(ThreadSafeInvertedIndex index, WorkQueue workers) {
 		this.workers = workers;
 		buildResult = new TreeMap<String, List<SearchResult>>();
 		multipleIndex = index;
-		lock = new ReadWriteLock();
 	}
 	
 	public void parseQuery(Path file, boolean searchFlag) throws IOException {
@@ -57,13 +55,7 @@ public class MultithreadedQueryHelper implements QueryHelperInterface {
 			String word = String.join(" ", words);
 			List<SearchResult> results = (flag) ? multipleIndex.exactSearch(words) : multipleIndex.partialSearch(words);
 
-			lock.lockReadWrite();
-			try {
-				buildResult.put(word, results);
-			} finally {
-				lock.unlockReadWrite();
-			}
-
+			buildResult.put(word, results);
 		}
 	}
 
@@ -76,11 +68,6 @@ public class MultithreadedQueryHelper implements QueryHelperInterface {
 
 	@Override
 	public void printHelper(Path path) {
-		lock.lockReadWrite();
-		try {
-			QueryHelper.printQuery(path, buildResult);
-		} finally {
-			lock.unlockReadWrite();
-		}
+		QueryHelper.printQuery(path, buildResult);
 	}
 }

@@ -13,11 +13,10 @@ public class WebCrawler implements WebCrawlerInterface{
 	private int MAX_LINKS;
 	
 	public WebCrawler(InvertedIndex index){
-
-		this.index = index;
-		this.MAX_LINKS = 50;
 		this.duplicateSet = new HashSet<String>();
 		this.linkQueue = new LinkedList<String>();
+		this.index = index;
+		this.MAX_LINKS = 50;
 	}
 		
 	/**
