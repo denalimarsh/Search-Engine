@@ -7,8 +7,8 @@ public class Driver {
 	 * The main driver method which reads in the input arguments, instantiates
 	 * the main InvertedIndex data structure, and if appropriate, calls
 	 * traverse. If appropriate, calls parseQuery, exactSearch, and
-	 * partialSearch, and printHelper. If the multi flag is enabled, 
-	 * the InvertedIndex and its methods will execute as multithreaded.
+	 * partialSearch, and printHelper. If the multi flag is enabled, the
+	 * InvertedIndex and its methods will execute as multithreaded.
 	 * 
 	 * @param args
 	 *            - the command line arguments which designate where the input

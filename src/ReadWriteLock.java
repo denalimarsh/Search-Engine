@@ -7,69 +7,68 @@
  * continue.
  */
 public class ReadWriteLock {
-    private int readers;
-    private int writers;
+	private int readers;
+	private int writers;
 
-    /**
-     * Initializes a multi-reader single-writer lock.
-     */
-    public ReadWriteLock() {
-        readers = 0;
-        writers = 0;
-    }
+	/**
+	 * Initializes a multi-reader single-writer lock.
+	 */
+	public ReadWriteLock() {
+		readers = 0;
+		writers = 0;
+	}
 
-    /**
-     * Will wait until there are no active writers in the system, and then will
-     * increase the number of active readers.
-     */
-    public synchronized void lockReadOnly() {
-        while (writers > 0) {
-            try {
-                this.wait();
-            }
-            catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
-            }
-        }
+	/**
+	 * Will wait until there are no active writers in the system, and then will
+	 * increase the number of active readers.
+	 */
+	public synchronized void lockReadOnly() {
+		while (writers > 0) {
+			try {
+				this.wait();
+			} catch (InterruptedException ex) {
+				Thread.currentThread().interrupt();
+			}
+		}
 
-        readers++;
-    }
+		readers++;
+	}
 
-    /**
-     * Will decrease the number of active readers, and notify any waiting
-     * threads if necessary.
-     */
-    public synchronized void unlockReadOnly() {
-        readers--;     
-        if(readers==0){ 
-        	this.notifyAll();
-        }
-    }
+	/**
+	 * Will decrease the number of active readers, and notify any waiting
+	 * threads if necessary.
+	 */
+	public synchronized void unlockReadOnly() {
+		readers--;
+		if (readers == 0) {
+			this.notifyAll();
+		}
+	}
 
-    /**
-     * Will wait until there are no active readers or writers in the system, and
-     * then will increase the number of active writers.
-     */
-    public synchronized void lockReadWrite() {
-        while(writers >0 || readers > 0){
-        	try{
-        		this.wait();
-        	}catch(InterruptedException ex){
-        		Thread.currentThread().interrupt();
-        	}
-        }
-        writers++;
-    }
+	/**
+	 * Will wait until there are no active readers or writers in the system, and
+	 * then will increase the number of active writers.
+	 */
+	public synchronized void lockReadWrite() {
+		while (writers > 0 || readers > 0) {
+			try {
+				this.wait();
+			} catch (InterruptedException ex) {
+				Thread.currentThread().interrupt();
+			}
+		}
+		writers++;
+	}
 
-    /**
-     * Will decrease the number of active writers, and notify any waiting
-     * threads if necessary.
-     */
-    public synchronized void unlockReadWrite() {
-        writers--;
-        
-        if(writers==0){ 
-        	this.notifyAll();
-        }
-    }
+	/**
+	 * Will decrease the number of active writers, and notify any waiting
+	 * threads if necessary.
+	 */
+	public synchronized void unlockReadWrite() {
+		writers--;
+
+		if (writers == 0) {
+			this.notifyAll();
+		}
+	}
 }
