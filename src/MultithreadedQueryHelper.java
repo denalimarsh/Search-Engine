@@ -10,24 +10,24 @@ import java.util.TreeMap;
 public class MultithreadedQueryHelper implements QueryHelperInterface {
 
 	private final TreeMap<String, List<SearchResult>> buildResult;
-	private final ThreadSafeInvertedIndex multiIndex;
+	private final ThreadSafeInvertedIndex multipleIndex;
 	private final WorkQueue workers;
 	private final ReadWriteLock lock;
 
 	public MultithreadedQueryHelper(ThreadSafeInvertedIndex index, WorkQueue workers) {
 		this.workers = workers;
 		buildResult = new TreeMap<String, List<SearchResult>>();
-		multiIndex = index;
+		multipleIndex = index;
 		lock = new ReadWriteLock();
 	}
 	
-	public void parseQueryFile(Path filename, boolean searchType) throws IOException {
-		try (BufferedReader reader = Files.newBufferedReader(filename, Charset.forName("UTF-8"));) {
+	public void parseQuery(Path file, boolean searchFlag) throws IOException {
+		try (BufferedReader reader = Files.newBufferedReader(file, Charset.forName("UTF-8"));) {
 
 			String line;
 
 			while ((line = reader.readLine()) != null) {
-				workers.execute(new QueryRunner(line, searchType));
+				workers.execute(new QueryRunner(line, searchFlag));
 			}
 
 			workers.finish();
@@ -54,12 +54,12 @@ public class MultithreadedQueryHelper implements QueryHelperInterface {
 
 			String[] words = line.trim().replaceAll("\\p{Punct}+", "").toLowerCase().split("\\s+");
 			Arrays.sort(words);
-			String searchname = String.join(" ", words);
-			List<SearchResult> results = (flag) ? multiIndex.exactSearch(words) : multiIndex.partialSearch(words);
+			String word = String.join(" ", words);
+			List<SearchResult> results = (flag) ? multipleIndex.exactSearch(words) : multipleIndex.partialSearch(words);
 
 			lock.lockReadWrite();
 			try {
-				buildResult.put(searchname, results);
+				buildResult.put(word, results);
 			} finally {
 				lock.unlockReadWrite();
 			}

@@ -23,68 +23,68 @@ public class ThreadSafeInvertedIndex extends InvertedIndex{
 	
 	@Override
 	public void print(Path path) {
-		lock.lockReadWrite();
+		lock.lockReadOnly();
 		try {
 			super.print(path);
 
 		} finally {
-			lock.unlockReadWrite();
+			lock.unlockReadOnly();
 		}
 	}
 	
 	@Override
 	public boolean containsWord(String word) {
-		lock.lockReadWrite();
+		lock.lockReadOnly();
 		try {
 			return super.containsWord(word);
 
 		} finally {
-			lock.unlockReadWrite();
+			lock.unlockReadOnly();
 		}
 	}
 	
 	@Override
 	public int size() {
-		lock.lockReadWrite();
+		lock.lockReadOnly();
 		try {
 			return super.size();
 
 		} finally {
-			lock.unlockReadWrite();
+			lock.unlockReadOnly();
 		}
 	}
 	
 	
 	@Override
 	public List<SearchResult> partialSearch(String[] querywords)  {
-		lock.lockReadWrite();
+		lock.lockReadOnly();
 		try {
 			return super.partialSearch(querywords);
 
 		} finally {
-			lock.unlockReadWrite();
+			lock.unlockReadOnly();
 		}
 	}
 	
 	@Override
 	public List<SearchResult> exactSearch(String[] querywords)  {
-		lock.lockReadWrite();
+		lock.lockReadOnly();
 		try {
 			return super.exactSearch(querywords);
 
 		} finally {
-			lock.unlockReadWrite();
+			lock.unlockReadOnly();
 		}
 	}
 	
 	@Override
 	public String toString()  {
-		lock.lockReadWrite();
+		lock.lockReadOnly();
 		try {
 			return super.toString();
 
 		} finally {
-			lock.unlockReadWrite();
+			lock.unlockReadOnly();
 		}
 	}
 	

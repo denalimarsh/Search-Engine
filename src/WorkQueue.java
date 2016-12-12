@@ -29,16 +29,17 @@ public class WorkQueue {
     }
 
     /**
-     * Starts a work queue with the specified number of threads.
+     * Starts a work queue with multiple threads.
      *
      * @param threads
-     *            number of worker threads; should be greater than 1
+     *            number of worker threads to be used in the workQueue
      */
     public WorkQueue(int threads) {
+    	this.pending = 0;
+        this.shutdown = false;
         this.queue = new LinkedList<Runnable>();
         this.workers = new PoolWorker[threads];
-        this.pending = 0;
-        this.shutdown = false;
+        
 
         for (int i = 0; i < threads; i++) {
             workers[i] = new PoolWorker();
@@ -81,31 +82,12 @@ public class WorkQueue {
      * but threads in-progress will not be interrupted.
      */
     public void shutdown() {
-
     	finish();
         shutdown = true;
-
         synchronized (queue) {
             queue.notifyAll();
         }
     }
-
-    /**
-     * Returns the number of worker threads being used by the work queue.
-     *
-     * @return number of worker threads
-     */
-    public int size() {
-        return workers.length;
-    }
-    
-    
-    /**
-     * Adds to the work queue.
-     */
-	private synchronized void increase() {
-		pending++;
-	}
 
 	/**
 	 * Removes from the work queue.
@@ -116,6 +98,22 @@ public class WorkQueue {
 		if (pending <= 0) {
 			this.notifyAll();
 		}
+	}
+	
+	  /**
+     * Returns the number of worker threads being used by the work queue.
+     *
+     * @return number of worker threads
+     */
+    public int size() {
+        return workers.length;
+    }
+    
+    /**
+     * Adds to the work queue.
+     */
+	private synchronized void increase() {
+		pending++;
 	}
 	
 

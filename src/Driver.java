@@ -75,7 +75,7 @@ public class Driver {
 			String inputQuery = parser.getValue("-exact");
 			Path inputQueryPath = Paths.get(inputQuery);
 			try {
-				query.parseQueryFile(inputQueryPath, true);
+				query.parseQuery(inputQueryPath, true);
 			} catch (IOException e) {
 				System.out.println("Unable to parse file.");
 			}
@@ -85,7 +85,7 @@ public class Driver {
 			String inputQuery = parser.getValue("-query");
 			Path inputQueryPath = Paths.get(inputQuery);
 			try {
-				query.parseQueryFile(inputQueryPath, false);
+				query.parseQuery(inputQueryPath, false);
 			} catch (IOException e) {
 				System.out.println("Unable to parse file.");
 			}

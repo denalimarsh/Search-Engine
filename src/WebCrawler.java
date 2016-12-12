@@ -35,21 +35,32 @@ public class WebCrawler implements WebCrawlerInterface{
 		}
 	}
 	
+	public static void polishHTML(String link, String html, InvertedIndex index){
+		html = HTMLCleaner.cleanHTML(html);
+		String[] parsedHTML = HTMLCleaner.parseWords(html);
+		
+		for(int i = 0; i < parsedHTML.length; i++){
+			index.add(parsedHTML[i], link, i + 1);
+		}
+		
+	}
+	
 	private void crawlHelper(String link){
 		String html;
 		try{
-			URL base = new URL(link);
+			URL baseLink = new URL(link);
 			html = HTMLCleaner.fetchHTML(link);
 			ArrayList<String> urlList = LinkParser.listLinks(html);
 			
 			for(String current : urlList){
-				URL absolute = new URL(base, current);
+				URL absolute = new URL(baseLink, current);
 				URL cleaned = new URL(absolute.getProtocol(), absolute.getHost(), absolute.getFile());
 				String finishedURL = cleaned.toString();
 				
 				if (duplicateSet.size() >= MAX_LINKS) {
 					break;
-				} else if (!duplicateSet.contains(finishedURL)) {
+				} 
+				else if (!duplicateSet.contains(finishedURL)) {
 					duplicateSet.add(finishedURL);
 					linkQueue.add(finishedURL);
 				}
@@ -62,13 +73,5 @@ public class WebCrawler implements WebCrawlerInterface{
 		}
 	}
 	
-	public static void polishHTML(String link, String html, InvertedIndex index){
-		html = HTMLCleaner.cleanHTML(html);
-		String[] parsedHTML = HTMLCleaner.parseWords(html);
-		
-		for(int i = 0; i < parsedHTML.length; i++){
-			index.add(parsedHTML[i], link, i + 1);
-		}
-		
-	}
+	
 }

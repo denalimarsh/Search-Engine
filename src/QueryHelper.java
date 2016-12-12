@@ -18,21 +18,21 @@ public class QueryHelper implements QueryHelperInterface{
 		this.index = input;
 	}
 
-	public void parseQueryFile(Path filename, boolean searchType) throws IOException {
+	public void parseQuery(Path file, boolean searchFlag) throws IOException {
 
-		try (BufferedReader reader = Files.newBufferedReader(filename, Charset.forName("UTF-8"));) {
+		try (BufferedReader reader = Files.newBufferedReader(file, Charset.forName("UTF-8"));) {
 
 			String line;
 			while ((line = reader.readLine()) != null) {
 				String[] words = line.trim().replaceAll("\\p{Punct}+", "").toLowerCase().split("\\s+");
 				Arrays.sort(words);
 				String searchname = String.join(" ", words);
-				if (searchType) {
+				if (searchFlag) {
 					List<SearchResult> results = index.exactSearch(words);
 					buildResult.put(searchname, results);
 				}
 
-				else if (!searchType) {
+				else if (!searchFlag) {
 					List<SearchResult> results = index.partialSearch(words);
 					buildResult.put(searchname, results);
 				}

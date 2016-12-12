@@ -3,7 +3,7 @@ import java.nio.file.Path;
 
 public interface QueryHelperInterface {
 
-	public void parseQueryFile(Path filename, boolean searchType) throws IOException;
+	public void parseQuery(Path file, boolean searchFlag) throws IOException;
 	
 	/**
 	 * Writes out the query map in JSON format to the output path.
