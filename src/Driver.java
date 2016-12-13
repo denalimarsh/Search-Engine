@@ -22,6 +22,7 @@ public class Driver {
 		QueryHelperInterface query;
 		WebCrawlerInterface crawler;
 		parser.parseArguments(args);
+		int port;
 
 		if (parser.hasFlag("-multi") && parser.getValue("-multi") != null) {
 			int threadCount = 5;
@@ -77,7 +78,7 @@ public class Driver {
 			Path inputQueryPath = Paths.get(inputQuery);
 			query.parseQuery(inputQueryPath, true);
 		}
-
+		
 		if (parser.hasFlag("-query") && parser.hasValue("-query")) {
 			String inputQuery = parser.getValue("-query");
 			Path inputQueryPath = Paths.get(inputQuery);
@@ -88,6 +89,16 @@ public class Driver {
 			String outputQuery = parser.getValue("-results", "results.json");
 			Path outputQueryPath = Paths.get(outputQuery);
 			query.printHelper(outputQueryPath);
+		}
+		
+		if (parser.hasFlag("-port")) {
+			if((parser.hasValue("-port"))){
+				port = Integer.parseInt(parser.getValue("-port"));
+			}else{
+				port = 8080;
+			}
+			MainServer server = new MainServer(index, port);
+			server.startServer();
 		}
 
 		if (workers != null) {
