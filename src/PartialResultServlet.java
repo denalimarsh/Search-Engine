@@ -8,6 +8,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("serial")
+/**
+ * Server servlet which displays partial search results
+ *
+ */
 public class PartialResultServlet extends HttpServlet{
 	
 	private static final String TITLE = "partialResults";

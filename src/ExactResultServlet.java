@@ -8,6 +8,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("serial")
+/**
+ *  Server servlet which displays exact search results
+ *
+ */
 public class ExactResultServlet extends HttpServlet{
 	
 	private static final String TITLE = "exactResults";

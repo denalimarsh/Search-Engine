@@ -4,6 +4,10 @@ import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
+/**
+ *  Server class which starts and manages the server
+ *
+ */
 public class MainServer {
 
 	private static int port;
@@ -13,7 +17,10 @@ public class MainServer {
 		MainServer.port = portNumber;
 		this.index = inputIndex;
 	}
-
+	
+	/**
+	 * Starts the main server, adding servlets as needed
+	 */
 	public void startServer() {
 		
 		Server server = new Server(port);
