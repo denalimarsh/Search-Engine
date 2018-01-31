@@ -1,3 +1,3 @@
 # Search Engine
 
-Submission repository for the CS 212 Search Engine project.
+This is the backbone of a scalable, optimized search engine written in Java which indexes large word files utilizing a custom 'InvertedIndexBuilder' class. The search engine can connect to the internet and crawl links, indexing the cleaned HTML text while recursively crawling subsequently found links. Originally developed at the University of San Francisco as the final project for CS212 Software Development.
